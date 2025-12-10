@@ -1,0 +1,334 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "lexer.h"
+
+/* Type definitions for Bison union - must be included before y.tab.h */
+/* These will be generated, so we include the necessary definitions */
+#include "ast.h"
+
+extern int lineNum;
+extern int yylex();
+extern int yyerror(const char *msg);
+
+/* Function declarations */
+ASTNode* createNode(NodeType type);
+ASTNode* createNumNode(int value);
+ASTNode* createIdNode(char *name);
+ASTNode* createBinOpNode(OpType op, ASTNode *left, ASTNode *right);
+ASTNode* createUnOpNode(OpType op, ASTNode *operand);
+void addChild(ASTNode *parent, ASTNode *child);
+
+/* Include other headers after types are defined */
+#include "symbol_table.h"
+#include "codegen.h"
+
+ASTNode *root = NULL;
+SymbolTable *symTable = NULL;
+CodeGenerator *codeGen = NULL;
+
+%}
+
+%union {
+    int num;
+    char *id;
+    char *str;
+    ASTNode *node;
+}
+
+%token INT IF ELSE WHILE FOR SCANF PRINTF
+%token PLUS MINUS MULT DIV MOD POW
+%token EQ NE LT GT LE GE
+%token AND OR NOT
+%token ASSIGN
+%token LPAREN RPAREN LBRACE RBRACE SEMI COMMA
+%token <num> NUM
+%token <id> ID
+%token <str> STRING
+
+%type <node> program decl_list decl stmt_list stmt
+%type <node> assign_stmt if_stmt while_stmt for_stmt
+%type <node> read_stmt write_stmt expr
+%type <node> additive_expr multiplicative_expr
+%type <node> unary_expr primary_expr comparison_expr
+%type <node> logical_and_expr logical_or_expr
+
+%left OR
+%left AND
+%left EQ NE LT GT LE GE
+%left PLUS MINUS
+%left MULT DIV MOD
+%right POW
+%right NOT
+%nonassoc UMINUS
+
+%%
+
+program
+    : decl_list stmt_list
+        {
+            $$ = createNode(NODE_PROGRAM);
+            addChild($$, $1);
+            addChild($$, $2);
+            root = $$;
+        }
+    | stmt_list
+        {
+            $$ = createNode(NODE_PROGRAM);
+            addChild($$, $1);
+            root = $$;
+        }
+    ;
+
+decl_list
+    : decl
+        {
+            $$ = createNode(NODE_DECL_LIST);
+            addChild($$, $1);
+        }
+    | decl_list decl
+        {
+            addChild($1, $2);
+            $$ = $1;
+        }
+    ;
+
+decl
+    : INT ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_INT, lineNum);
+        }
+    ;
+
+stmt_list
+    : stmt
+        {
+            $$ = createNode(NODE_STMT_LIST);
+            addChild($$, $1);
+        }
+    | stmt_list stmt
+        {
+            addChild($1, $2);
+            $$ = $1;
+        }
+    ;
+
+stmt
+    : LBRACE stmt_list RBRACE
+        {
+            $$ = $2;
+        }
+    | assign_stmt { $$ = $1; }
+    | if_stmt { $$ = $1; }
+    | while_stmt { $$ = $1; }
+    | for_stmt { $$ = $1; }
+    | read_stmt { $$ = $1; }
+    | write_stmt { $$ = $1; }
+    ;
+
+assign_stmt
+    : ID ASSIGN expr SEMI
+        {
+            if (!isSymbolDefined(symTable, $1)) {
+                fprintf(stderr, "Error at line %d: Variable '%s' not declared\n", lineNum, $1);
+            }
+            $$ = createNode(NODE_ASSIGN);
+            ASTNode *idNode = createIdNode($1);
+            addChild($$, idNode);
+            addChild($$, $3);
+        }
+    ;
+
+if_stmt
+    : IF LPAREN expr RPAREN stmt %prec IF
+        {
+            $$ = createNode(NODE_IF);
+            addChild($$, $3);
+            addChild($$, $5);
+        }
+    | IF LPAREN expr RPAREN stmt ELSE stmt
+        {
+            $$ = createNode(NODE_IF);
+            addChild($$, $3);
+            addChild($$, $5);
+            addChild($$, $7);
+        }
+    ;
+
+while_stmt
+    : WHILE LPAREN expr RPAREN stmt
+        {
+            $$ = createNode(NODE_WHILE);
+            addChild($$, $3);
+            addChild($$, $5);
+        }
+    ;
+
+for_stmt
+    : FOR LPAREN ID ASSIGN expr SEMI expr SEMI ID ASSIGN expr RPAREN stmt
+        {
+            $$ = createNode(NODE_FOR);
+            ASTNode *init = createNode(NODE_ASSIGN);
+            addChild(init, createIdNode($3));
+            addChild(init, $5);
+            addChild($$, init);
+            addChild($$, $7);
+            ASTNode *update = createNode(NODE_ASSIGN);
+            addChild(update, createIdNode($9));
+            addChild(update, $11);
+            addChild($$, update);
+            addChild($$, $13);
+        }
+    ;
+
+read_stmt
+    : SCANF LPAREN STRING COMMA ID RPAREN SEMI
+        {
+            if (!isSymbolDefined(symTable, $5)) {
+                fprintf(stderr, "Error at line %d: Variable '%s' not declared\n", lineNum, $5);
+            }
+            $$ = createNode(NODE_READ);
+            ASTNode *idNode = createIdNode($5);
+            addChild($$, idNode);
+        }
+    ;
+
+write_stmt
+    : PRINTF LPAREN expr RPAREN SEMI
+        {
+            $$ = createNode(NODE_WRITE);
+            addChild($$, $3);
+        }
+    | PRINTF LPAREN STRING RPAREN SEMI
+        {
+            $$ = createNode(NODE_WRITE);
+        }
+    | PRINTF LPAREN STRING COMMA expr RPAREN SEMI
+        {
+            $$ = createNode(NODE_WRITE);
+            addChild($$, $5);
+        }
+    ;
+
+expr
+    : logical_or_expr { $$ = $1; }
+    ;
+
+logical_or_expr
+    : logical_and_expr { $$ = $1; }
+    | logical_or_expr OR logical_and_expr
+        {
+            $$ = createBinOpNode(OP_OR, $1, $3);
+        }
+    ;
+
+logical_and_expr
+    : comparison_expr { $$ = $1; }
+    | logical_and_expr AND comparison_expr
+        {
+            $$ = createBinOpNode(OP_AND, $1, $3);
+        }
+    ;
+
+comparison_expr
+    : additive_expr { $$ = $1; }
+    | comparison_expr EQ additive_expr
+        {
+            $$ = createBinOpNode(OP_EQ, $1, $3);
+        }
+    | comparison_expr NE additive_expr
+        {
+            $$ = createBinOpNode(OP_NE, $1, $3);
+        }
+    | comparison_expr LT additive_expr
+        {
+            $$ = createBinOpNode(OP_LT, $1, $3);
+        }
+    | comparison_expr GT additive_expr
+        {
+            $$ = createBinOpNode(OP_GT, $1, $3);
+        }
+    | comparison_expr LE additive_expr
+        {
+            $$ = createBinOpNode(OP_LE, $1, $3);
+        }
+    | comparison_expr GE additive_expr
+        {
+            $$ = createBinOpNode(OP_GE, $1, $3);
+        }
+    ;
+
+additive_expr
+    : multiplicative_expr { $$ = $1; }
+    | additive_expr PLUS multiplicative_expr
+        {
+            $$ = createBinOpNode(OP_PLUS, $1, $3);
+        }
+    | additive_expr MINUS multiplicative_expr
+        {
+            $$ = createBinOpNode(OP_MINUS, $1, $3);
+        }
+    ;
+
+multiplicative_expr
+    : unary_expr { $$ = $1; }
+    | multiplicative_expr MULT unary_expr
+        {
+            $$ = createBinOpNode(OP_MULT, $1, $3);
+        }
+    | multiplicative_expr DIV unary_expr
+        {
+            $$ = createBinOpNode(OP_DIV, $1, $3);
+        }
+    | multiplicative_expr MOD unary_expr
+        {
+            $$ = createBinOpNode(OP_MOD, $1, $3);
+        }
+    | multiplicative_expr POW unary_expr
+        {
+            $$ = createBinOpNode(OP_POW, $1, $3);
+        }
+    ;
+
+unary_expr
+    : primary_expr { $$ = $1; }
+    | NOT unary_expr
+        {
+            $$ = createUnOpNode(OP_NOT, $2);
+        }
+    | MINUS unary_expr %prec UMINUS
+        {
+            $$ = createUnOpNode(OP_MINUS, $2);
+        }
+    ;
+
+primary_expr
+    : NUM
+        {
+            $$ = createNumNode($1);
+        }
+    | ID
+        {
+            if (!isSymbolDefined(symTable, $1)) {
+                fprintf(stderr, "Error at line %d: Variable '%s' not declared\n", lineNum, $1);
+            }
+            $$ = createIdNode($1);
+        }
+    | LPAREN expr RPAREN
+        {
+            $$ = $2;
+        }
+    ;
+
+%%
+
+int yyerror(const char *msg) {
+    fprintf(stderr, "Syntax Error at line %d: %s\n", lineNum, msg);
+    return 0;
+}
+
