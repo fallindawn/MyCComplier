@@ -1,8 +1,8 @@
 ==================================================
-          C Language Compiler v1.0
+          C Language Compiler
 ==================================================
 
-Input File: test/test5.c
+Input File: .\test\test5.c
 
 Starting lexical and syntax analysis...
 
@@ -47,9 +47,11 @@ No.   Token Type           Lexeme               Line
 34    RBRACE               }                    9         
 35    KEYWORD_PRINTF       printf               11        
 36    LPAREN               (                    11        
-37    IDENTIFIER           sum                  11        
-38    RPAREN               )                    11        
-39    SEMI                 ;                    11        
+37    STRING               "%d\n"               11        
+38    COMMA                ,                    11        
+39    IDENTIFIER           sum                  11        
+40    RPAREN               )                    11        
+41    SEMI                 ;                    11        
 ==============================================
 
 
@@ -89,10 +91,10 @@ PROGRAM
 
 
 ========== Symbol Table ==========
-Name                           Type                 Line      
--------------------------------------------
-i                              int                  2         
-sum                            int                  3         
+Name                           Kind                 Type                 Line      
+-----------------------------------------------------------
+i                              variable             int                  2         
+sum                            variable             int                  3         
 ===================================
 
 Generating intermediate code...
@@ -117,5 +119,64 @@ Num   Op              Arg1                 Arg2                 Result
 14    =               sum                                       t8                  
 15    WRITE           t8                                                            
 ====================================================
+
+Generating assembly code...
+
+========== Assembly Code ==========
+;;; =======================================
+;;; Generated Assembly Code
+;;; =======================================
+
+.386
+.model flat, stdcall
+
+.data
+    i dd 0
+    sum dd 0
+
+.code
+
+    ;;; DECL i
+    ;;; DECL sum
+    mov eax, 0
+    mov [t0], eax
+    mov eax, t0
+    mov [sum], eax
+    mov eax, 1
+    mov [t1], eax
+    mov eax, t1
+    mov [i], eax
+    mov eax, i
+    mov [t4], eax
+    mov eax, 1
+    mov [t4], eax
+    mov eax, [t4]
+    mov ebx, [t4]
+    add eax, ebx
+    mov [t4], eax
+    mov eax, t4
+    mov [i], eax
+    mov eax, sum
+    mov [t7], eax
+    mov eax, i
+    mov [t7], eax
+    mov eax, [t7]
+    mov ebx, [t7]
+    add eax, ebx
+    mov [t7], eax
+    mov eax, t7
+    mov [sum], eax
+    mov eax, sum
+    mov [t8], eax
+    ;;; WRITE [t8]
+    mov eax, [t8]
+    ;;; 需要调用输出函数（如 printf）
+
+    ;;; 程序结束
+    mov eax, 0
+    ret
+
+end
+===================================
 
 Compilation completed successfully!

@@ -1,8 +1,8 @@
 ==================================================
-          C Language Compiler v1.0
+          C Language Compiler
 ==================================================
 
-Input File: test/test2.c
+Input File: .\test\test2.c
 
 Starting lexical and syntax analysis...
 
@@ -54,10 +54,12 @@ No.   Token Type           Lexeme               Line
 41    LBRACE               {                    13        
 42    KEYWORD_PRINTF       printf               14        
 43    LPAREN               (                    14        
-44    IDENTIFIER           a                    14        
-45    RPAREN               )                    14        
-46    SEMI                 ;                    14        
-47    RBRACE               }                    15        
+44    STRING               "%d\n"               14        
+45    COMMA                ,                    14        
+46    IDENTIFIER           a                    14        
+47    RPAREN               )                    14        
+48    SEMI                 ;                    14        
+49    RBRACE               }                    15        
 ==============================================
 
 
@@ -102,10 +104,10 @@ PROGRAM
 
 
 ========== Symbol Table ==========
-Name                           Type                 Line      
--------------------------------------------
-a                              int                  2         
-i                              int                  3         
+Name                           Kind                 Type                 Line      
+-----------------------------------------------------------
+a                              variable             int                  2         
+i                              variable             int                  3         
 ===================================
 
 Generating intermediate code...
@@ -130,5 +132,64 @@ Num   Op              Arg1                 Arg2                 Result
 14    =               a                                         t8                  
 15    WRITE           t8                                                            
 ====================================================
+
+Generating assembly code...
+
+========== Assembly Code ==========
+;;; =======================================
+;;; Generated Assembly Code
+;;; =======================================
+
+.386
+.model flat, stdcall
+
+.data
+    a dd 0
+    i dd 0
+
+.code
+
+    ;;; DECL a
+    ;;; DECL i
+    mov eax, 0
+    mov [t0], eax
+    mov eax, t0
+    mov [a], eax
+    mov eax, 0
+    mov [t1], eax
+    mov eax, t1
+    mov [i], eax
+    mov eax, a
+    mov [t4], eax
+    mov eax, i
+    mov [t4], eax
+    mov eax, [t4]
+    mov ebx, [t4]
+    add eax, ebx
+    mov [t4], eax
+    mov eax, t4
+    mov [a], eax
+    mov eax, i
+    mov [t7], eax
+    mov eax, 1
+    mov [t7], eax
+    mov eax, [t7]
+    mov ebx, [t7]
+    add eax, ebx
+    mov [t7], eax
+    mov eax, t7
+    mov [i], eax
+    mov eax, a
+    mov [t8], eax
+    ;;; WRITE [t8]
+    mov eax, [t8]
+    ;;; 需要调用输出函数（如 printf）
+
+    ;;; 程序结束
+    mov eax, 0
+    ret
+
+end
+===================================
 
 Compilation completed successfully!

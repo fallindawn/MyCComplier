@@ -260,12 +260,22 @@ Num   Op              Arg1                 Arg2                 Result
 19    =               t4                                        b                   
 20    =               0                                         t5                  
 21    =               t5                                        c                   
-22    =               t6                                        sum                 
-23    =               t7                                        diff                
-24    =               sum                                       t8                  
-25    WRITE           t8                                                            
-26    =               diff                                      t9                  
-27    WRITE           t9                                                            
+22    =               a                                         t7                  
+23    PARAM           t7                                                            
+24    =               b                                         t8                  
+25    PARAM           t8                                                            
+26    CALL add                                                  t8                  
+27    =               t8                                        sum                 
+28    =               a                                         t10                 
+29    PARAM           t10                                                           
+30    =               b                                         t11                 
+31    PARAM           t11                                                           
+32    CALL subtract                                             t11                 
+33    =               t11                                       diff                
+34    =               sum                                       t12                 
+35    WRITE           t12                                                           
+36    =               diff                                      t13                 
+37    WRITE           t13                                                           
 ====================================================
 
 Generating assembly code...
@@ -326,19 +336,43 @@ Generating assembly code...
     mov [t5], eax
     mov eax, t5
     mov [c], eax
-    mov eax, t6
+    mov eax, a
+    mov [t7], eax
+    mov eax, [t7]
+    push eax
+    ;;; Push parameter: t7
+    mov eax, b
+    mov [t8], eax
+    mov eax, [t8]
+    push eax
+    ;;; Push parameter: t8
+    call add
+    mov [t8], eax
+    mov eax, t8
     mov [sum], eax
-    mov eax, t7
+    mov eax, a
+    mov [t10], eax
+    mov eax, [t10]
+    push eax
+    ;;; Push parameter: t10
+    mov eax, b
+    mov [t11], eax
+    mov eax, [t11]
+    push eax
+    ;;; Push parameter: t11
+    call subtract
+    mov [t11], eax
+    mov eax, t11
     mov [diff], eax
     mov eax, sum
-    mov [t8], eax
-    ;;; WRITE [t8]
-    mov eax, [t8]
+    mov [t12], eax
+    ;;; WRITE [t12]
+    mov eax, [t12]
     ;;; 需要调用输出函数（如 printf）
     mov eax, diff
-    mov [t9], eax
-    ;;; WRITE [t9]
-    mov eax, [t9]
+    mov [t13], eax
+    ;;; WRITE [t13]
+    mov eax, [t13]
     ;;; 需要调用输出函数（如 printf）
 
     ;;; 程序结束

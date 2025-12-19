@@ -1,8 +1,8 @@
 ==================================================
-          C Language Compiler v1.0
+          C Language Compiler
 ==================================================
 
-Input File: test/test4.c
+Input File: .\test\test4.c
 
 Starting lexical and syntax analysis...
 
@@ -34,7 +34,7 @@ No.   Token Type           Lexeme               Line
 21    LBRACE               {                    8         
 22    KEYWORD_PRINTF       printf               9         
 23    LPAREN               (                    9         
-24    NUMBER               0                    9         
+24    STRING               "0"                  9         
 25    RPAREN               )                    9         
 26    SEMI                 ;                    9         
 27    RBRACE               }                    10        
@@ -47,7 +47,7 @@ No.   Token Type           Lexeme               Line
 34    LBRACE               {                    12        
 35    KEYWORD_PRINTF       printf               13        
 36    LPAREN               (                    13        
-37    NUMBER               1                    13        
+37    STRING               "1"                  13        
 38    RPAREN               )                    13        
 39    SEMI                 ;                    13        
 40    RBRACE               }                    14        
@@ -59,7 +59,7 @@ No.   Token Type           Lexeme               Line
 46    LBRACE               {                    16        
 47    KEYWORD_PRINTF       printf               17        
 48    LPAREN               (                    17        
-49    NUMBER               1                    17        
+49    STRING               "1"                  17        
 50    RPAREN               )                    17        
 51    SEMI                 ;                    17        
 52    RBRACE               }                    18        
@@ -87,28 +87,25 @@ PROGRAM
         ID(b)
       STMT_LIST
         WRITE
-          NUM(0)
     IF
       BINOP(||)
         ID(a)
         ID(b)
       STMT_LIST
         WRITE
-          NUM(1)
     IF
       UNOP(!)
         ID(b)
       STMT_LIST
         WRITE
-          NUM(1)
 ================================================
 
 
 ========== Symbol Table ==========
-Name                           Type                 Line      
--------------------------------------------
-a                              int                  2         
-b                              int                  3         
+Name                           Kind                 Type                 Line      
+-----------------------------------------------------------
+a                              variable             int                  2         
+b                              variable             int                  3         
 ===================================
 
 Generating intermediate code...
@@ -122,12 +119,40 @@ Num   Op              Arg1                 Arg2                 Result
 3     =               t0                                        a                   
 4     =               0                                         t1                  
 5     =               t1                                        b                   
-6     =               0                                         t2                  
-7     WRITE           t2                                                            
-8     =               1                                         t3                  
-9     WRITE           t3                                                            
-10    =               1                                         t4                  
-11    WRITE           t4                                                            
 ====================================================
+
+Generating assembly code...
+
+========== Assembly Code ==========
+;;; =======================================
+;;; Generated Assembly Code
+;;; =======================================
+
+.386
+.model flat, stdcall
+
+.data
+    a dd 0
+    b dd 0
+
+.code
+
+    ;;; DECL a
+    ;;; DECL b
+    mov eax, 1
+    mov [t0], eax
+    mov eax, t0
+    mov [a], eax
+    mov eax, 0
+    mov [t1], eax
+    mov eax, t1
+    mov [b], eax
+
+    ;;; 程序结束
+    mov eax, 0
+    ret
+
+end
+===================================
 
 Compilation completed successfully!

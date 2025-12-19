@@ -1,8 +1,8 @@
 ==================================================
-          C Language Compiler v1.0
+          C Language Compiler
 ==================================================
 
-Input File: test/test3.c
+Input File: .\test\test3.c
 
 Starting lexical and syntax analysis...
 
@@ -66,9 +66,11 @@ No.   Token Type           Lexeme               Line
 53    SEMI                 ;                    25        
 54    KEYWORD_PRINTF       printf               27        
 55    LPAREN               (                    27        
-56    IDENTIFIER           z                    27        
-57    RPAREN               )                    27        
-58    SEMI                 ;                    27        
+56    STRING               "%d\n"               27        
+57    COMMA                ,                    27        
+58    IDENTIFIER           z                    27        
+59    RPAREN               )                    27        
+60    SEMI                 ;                    27        
 ==============================================
 
 
@@ -125,11 +127,11 @@ PROGRAM
 
 
 ========== Symbol Table ==========
-Name                           Type                 Line      
--------------------------------------------
-x                              int                  2         
-y                              int                  3         
-z                              int                  4         
+Name                           Kind                 Type                 Line      
+-----------------------------------------------------------
+x                              variable             int                  2         
+y                              variable             int                  3         
+z                              variable             int                  4         
 ===================================
 
 Generating intermediate code...
@@ -171,5 +173,101 @@ Num   Op              Arg1                 Arg2                 Result
 31    =               z                                         t20                 
 32    WRITE           t20                                                           
 ====================================================
+
+Generating assembly code...
+
+========== Assembly Code ==========
+;;; =======================================
+;;; Generated Assembly Code
+;;; =======================================
+
+.386
+.model flat, stdcall
+
+.data
+    x dd 0
+    y dd 0
+    z dd 0
+
+.code
+
+    ;;; DECL x
+    ;;; DECL y
+    ;;; DECL z
+    mov eax, 15
+    mov [t0], eax
+    mov eax, t0
+    mov [x], eax
+    mov eax, 4
+    mov [t1], eax
+    mov eax, t1
+    mov [y], eax
+    mov eax, x
+    mov [t4], eax
+    mov eax, y
+    mov [t4], eax
+    mov eax, [t4]
+    mov ebx, [t4]
+    add eax, ebx
+    mov [t4], eax
+    mov eax, t4
+    mov [z], eax
+    mov eax, x
+    mov [t7], eax
+    mov eax, y
+    mov [t7], eax
+    mov eax, [t7]
+    mov ebx, [t7]
+    sub eax, ebx
+    mov [t7], eax
+    mov eax, t7
+    mov [z], eax
+    mov eax, x
+    mov [t10], eax
+    mov eax, y
+    mov [t10], eax
+    mov eax, [t10]
+    mov ebx, [t10]
+    imul eax, ebx
+    mov [t10], eax
+    mov eax, t10
+    mov [z], eax
+    mov eax, x
+    mov [t13], eax
+    mov eax, y
+    mov [t13], eax
+    mov eax, [t13]
+    mov ebx, [t13]
+    cdq
+    idiv ebx
+    mov [t13], eax
+    mov eax, t13
+    mov [z], eax
+    mov eax, x
+    mov [t16], eax
+    mov eax, y
+    mov [t16], eax
+    ;;; % t16, t16 -> t16
+    mov eax, t16
+    mov [z], eax
+    mov eax, 2
+    mov [t19], eax
+    mov eax, 8
+    mov [t19], eax
+    ;;; ^ t19, t19 -> t19
+    mov eax, t19
+    mov [z], eax
+    mov eax, z
+    mov [t20], eax
+    ;;; WRITE [t20]
+    mov eax, [t20]
+    ;;; 需要调用输出函数（如 printf）
+
+    ;;; 程序结束
+    mov eax, 0
+    ret
+
+end
+===================================
 
 Compilation completed successfully!

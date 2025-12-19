@@ -1,5 +1,5 @@
 ==================================================
-          C Language Compiler v1.0
+          C Language Compiler
 ==================================================
 
 Input File: .\test\test1.c
@@ -36,9 +36,11 @@ No.   Token Type           Lexeme               Line
 23    SEMI                 ;                    8         
 24    KEYWORD_PRINTF       printf               9         
 25    LPAREN               (                    9         
-26    IDENTIFIER           c                    9         
-27    RPAREN               )                    9         
-28    SEMI                 ;                    9         
+26    STRING               "%d\n"               9         
+27    COMMA                ,                    9         
+28    IDENTIFIER           c                    9         
+29    RPAREN               )                    9         
+30    SEMI                 ;                    9         
 ==============================================
 
 
@@ -70,11 +72,11 @@ PROGRAM
 
 
 ========== Symbol Table ==========
-Name                           Type                 Line      
--------------------------------------------
-a                              int                  2         
-b                              float                3         
-c                              short                4         
+Name                           Kind                 Type                 Line      
+-----------------------------------------------------------
+a                              variable             int                  2         
+b                              variable             float                3         
+c                              variable             short                4         
 ===================================
 
 Generating intermediate code...
@@ -96,5 +98,56 @@ Num   Op              Arg1                 Arg2                 Result
 11    =               c                                         t5                  
 12    WRITE           t5                                                            
 ====================================================
+
+Generating assembly code...
+
+========== Assembly Code ==========
+;;; =======================================
+;;; Generated Assembly Code
+;;; =======================================
+
+.386
+.model flat, stdcall
+
+.data
+    a dd 0
+    b dd 0
+    c dd 0
+
+.code
+
+    ;;; DECL a
+    ;;; DECL b
+    ;;; DECL c
+    mov eax, 10
+    mov [t0], eax
+    mov eax, t0
+    mov [a], eax
+    mov eax, 20
+    mov [t1], eax
+    mov eax, t1
+    mov [b], eax
+    mov eax, a
+    mov [t4], eax
+    mov eax, b
+    mov [t4], eax
+    mov eax, [t4]
+    mov ebx, [t4]
+    add eax, ebx
+    mov [t4], eax
+    mov eax, t4
+    mov [c], eax
+    mov eax, c
+    mov [t5], eax
+    ;;; WRITE [t5]
+    mov eax, [t5]
+    ;;; 需要调用输出函数（如 printf）
+
+    ;;; 程序结束
+    mov eax, 0
+    ret
+
+end
+===================================
 
 Compilation completed successfully!

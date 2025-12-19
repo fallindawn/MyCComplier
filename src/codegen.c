@@ -157,6 +157,35 @@ void generateIntermediateCodeExpr(ASTNode *ast, CodeGenerator *gen, SymbolTable 
             }
             break;
             
+        case NODE_CALL: {
+            /* 函数调用 */
+            if (ast->childrenCount > 0) {
+                ASTNode *funcName = ast->children[0];
+                char funcCall[256];
+                
+                if (funcName->type == NODE_ID) {
+                    /* 生成函数调用四元式 */
+                    if (ast->childrenCount > 1 && ast->children[1]->type == NODE_ARG_LIST) {
+                        /* 有参数的函数调用 */
+                        ASTNode *argList = ast->children[1];
+                        
+                        /* 为每个参数生成代码 */
+                        for (int i = 0; i < argList->childrenCount; i++) {
+                            char *argTemp = getTempVar(gen);
+                            generateIntermediateCodeExpr(argList->children[i], gen, table, argTemp);
+                            /* PARAM 操作符，参数在 arg1 */
+                            genCode(gen, "PARAM", argTemp, "", "");
+                        }
+                    }
+                    
+                    /* 生成函数调用指令 */
+                    sprintf(funcCall, "CALL %s", funcName->name);
+                    genCode(gen, funcCall, "", "", result);
+                }
+            }
+            break;
+        }
+            
         default:
             break;
     }
@@ -339,6 +368,28 @@ void generateAssemblyCode(CodeGenerator *gen, SymbolTable *table) {
             sprintf(line, "    ;;; READ [%s]", q->arg1);
             addAsmLine(gen, line);
             addAsmLine(gen, "    ;;; 需要调用输入函数（如 scanf）");
+        }
+        else if (strcmp(q->op, "PARAM") == 0) {
+            /* 函数参数传递 */
+            if (strlen(q->arg1) > 0) {
+                sprintf(line, "    mov eax, [%s]", q->arg1);
+                addAsmLine(gen, line);
+            } else {
+                sprintf(line, "    mov eax, %s", q->arg1);
+                addAsmLine(gen, line);
+            }
+            addAsmLine(gen, "    push eax");
+            sprintf(line, "    ;;; Push parameter: %s", q->arg1);
+            addAsmLine(gen, line);
+        }
+        else if (strncmp(q->op, "CALL", 4) == 0) {
+            /* 函数调用 */
+            char funcName[128];
+            sscanf(q->op, "CALL %s", funcName);
+            sprintf(line, "    call %s", funcName);
+            addAsmLine(gen, line);
+            sprintf(line, "    mov [%s], eax", q->result);
+            addAsmLine(gen, line);
         }
         else {
             /* 其他操作符 */
