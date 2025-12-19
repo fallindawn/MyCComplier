@@ -136,14 +136,14 @@ Num   Op              Arg1                 Arg2                 Result
 4     =               t0                                        a                   
 5     =               0                                         t1                  
 6     =               t1                                        i                   
-7     =               a                                         t4                  
+7     =               a                                         t3                  
 8     =               i                                         t4                  
-9     +               t4                   t4                   t4                  
-10    =               t4                                        a                   
-11    =               i                                         t7                  
+9     +               t3                   t4                   t2                  
+10    =               t2                                        a                   
+11    =               i                                         t6                  
 12    =               1                                         t7                  
-13    +               t7                   t7                   t7                  
-14    =               t7                                        i                   
+13    +               t6                   t7                   t5                  
+14    =               t5                                        i                   
 15    =               a                                         t8                  
 16    WRITE           t8                                                            
 17    =               0                                         t9                  
@@ -179,24 +179,24 @@ main:
     mov eax, t1
     mov [i], eax
     mov eax, a
-    mov [t4], eax
+    mov [t3], eax
     mov eax, i
     mov [t4], eax
-    mov eax, [t4]
+    mov eax, [t3]
     mov ebx, [t4]
     add eax, ebx
-    mov [t4], eax
-    mov eax, t4
+    mov [t2], eax
+    mov eax, t2
     mov [a], eax
     mov eax, i
-    mov [t7], eax
+    mov [t6], eax
     mov eax, 1
     mov [t7], eax
-    mov eax, [t7]
+    mov eax, [t6]
     mov ebx, [t7]
     add eax, ebx
-    mov [t7], eax
-    mov eax, t7
+    mov [t5], eax
+    mov eax, t5
     mov [i], eax
     mov eax, a
     mov [t8], eax

@@ -213,20 +213,20 @@ Num   Op              Arg1                 Arg2                 Result
 1     DECL            p                                                             
 2     DECL            q                                                             
 3     DECL            res                                                           
-4     =               p                                         t2                  
+4     =               p                                         t1                  
 5     =               q                                         t2                  
-6     +               t2                   t2                   t2                  
-7     =               t2                                        res                 
+6     +               t1                   t2                   t0                  
+7     =               t0                                        res                 
 8     =               res                                       t3                  
 9     RET             t3                                                            
 10    RET                                                                           
 11    LABEL subtract                                                                
 12    DECL            u                                                             
 13    DECL            v                                                             
-14    =               u                                         t6                  
+14    =               u                                         t5                  
 15    =               v                                         t6                  
-16    -               t6                   t6                   t6                  
-17    RET             t6                                                            
+16    -               t5                   t6                   t4                  
+17    RET             t4                                                            
 18    RET                                                                           
 19    LABEL main                                                                    
 20    DECL            a                                                             
@@ -241,14 +241,14 @@ Num   Op              Arg1                 Arg2                 Result
 29    PARAM           t10                                                           
 30    =               b                                         t11                 
 31    PARAM           t11                                                           
-32    CALL add                                                  t11                 
-33    =               t11                                       sum                 
+32    CALL add                                                  t9                  
+33    =               t9                                        sum                 
 34    =               a                                         t13                 
 35    PARAM           t13                                                           
 36    =               b                                         t14                 
 37    PARAM           t14                                                           
-38    CALL subtract                                             t14                 
-39    =               t14                                       diff                
+38    CALL subtract                                             t12                 
+39    =               t12                                       diff                
 40    =               sum                                       t15                 
 41    WRITE           t15                                                           
 42    =               diff                                      t16                 
@@ -286,14 +286,14 @@ add:
     ;;; DECL q
     ;;; DECL res
     mov eax, p
-    mov [t2], eax
+    mov [t1], eax
     mov eax, q
     mov [t2], eax
-    mov eax, [t2]
+    mov eax, [t1]
     mov ebx, [t2]
     add eax, ebx
-    mov [t2], eax
-    mov eax, t2
+    mov [t0], eax
+    mov eax, t0
     mov [res], eax
     mov eax, res
     mov [t3], eax
@@ -304,14 +304,14 @@ subtract:
     ;;; DECL u
     ;;; DECL v
     mov eax, u
-    mov [t6], eax
+    mov [t5], eax
     mov eax, v
     mov [t6], eax
-    mov eax, [t6]
+    mov eax, [t5]
     mov ebx, [t6]
     sub eax, ebx
-    mov [t6], eax
-    mov eax, [t6]
+    mov [t4], eax
+    mov eax, [t4]
     ret
     ret
 main:
@@ -338,8 +338,8 @@ main:
     push eax
     ;;; Push parameter: t11
     call add
-    mov [t11], eax
-    mov eax, t11
+    mov [t9], eax
+    mov eax, t9
     mov [sum], eax
     mov eax, a
     mov [t13], eax
@@ -352,8 +352,8 @@ main:
     push eax
     ;;; Push parameter: t14
     call subtract
-    mov [t14], eax
-    mov eax, t14
+    mov [t12], eax
+    mov eax, t12
     mov [diff], eax
     mov eax, sum
     mov [t15], eax

@@ -232,20 +232,20 @@ Num   Op              Arg1                 Arg2                 Result
 18    =               t2                                        y                   
 19    =               65                                        t3                  
 20    =               t3                                        ch                  
-21    =               a                                         t6                  
+21    =               a                                         t5                  
 22    =               a                                         t6                  
-23    +               t6                   t6                   t6                  
-24    =               t6                                        c                   
-25    =               x                                         t9                  
+23    +               t5                   t6                   t4                  
+24    =               t4                                        c                   
+25    =               x                                         t8                  
 26    =               y                                         t9                  
-27    *               t9                   t9                   t9                  
-28    =               t9                                        y                   
+27    *               t8                   t9                   t7                  
+28    =               t7                                        y                   
 29    =               100                                       t10                 
 30    WRITE           t10                                                           
-31    =               a                                         t13                 
+31    =               a                                         t12                 
 32    =               1                                         t13                 
-33    +               t13                  t13                  t13                 
-34    =               t13                                       a                   
+33    +               t12                  t13                  t11                 
+34    =               t11                                       a                   
 ====================================================
 
 Generating assembly code...
@@ -305,24 +305,24 @@ Generating assembly code...
     mov eax, t3
     mov [ch], eax
     mov eax, a
-    mov [t6], eax
+    mov [t5], eax
     mov eax, a
     mov [t6], eax
-    mov eax, [t6]
+    mov eax, [t5]
     mov ebx, [t6]
     add eax, ebx
-    mov [t6], eax
-    mov eax, t6
+    mov [t4], eax
+    mov eax, t4
     mov [c], eax
     mov eax, x
-    mov [t9], eax
+    mov [t8], eax
     mov eax, y
     mov [t9], eax
-    mov eax, [t9]
+    mov eax, [t8]
     mov ebx, [t9]
     imul eax, ebx
-    mov [t9], eax
-    mov eax, t9
+    mov [t7], eax
+    mov eax, t7
     mov [y], eax
     mov eax, [100]
     mov [t10], eax
@@ -330,14 +330,14 @@ Generating assembly code...
     mov eax, [t10]
     ;;; 需要调用输出函数（如 printf）
     mov eax, a
-    mov [t13], eax
+    mov [t12], eax
     mov eax, 1
     mov [t13], eax
-    mov eax, [t13]
+    mov eax, [t12]
     mov ebx, [t13]
     add eax, ebx
-    mov [t13], eax
-    mov eax, t13
+    mov [t11], eax
+    mov eax, t11
     mov [a], eax
 
     ;;; 程序结束

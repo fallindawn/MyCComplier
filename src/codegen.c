@@ -94,17 +94,21 @@ void generateIntermediateCode(ASTNode *ast, CodeGenerator *gen, SymbolTable *tab
         case NODE_ASSIGN:
             if (ast->childrenCount >= 2) {
                 char *result = ast->children[0]->name;
+                char tempVar_buf[32];
                 char *tempVar = getTempVar(gen);
-                generateIntermediateCodeExpr(ast->children[1], gen, table, tempVar);
-                genCode(gen, "=", tempVar, "", result);
+                strcpy(tempVar_buf, tempVar);
+                generateIntermediateCodeExpr(ast->children[1], gen, table, tempVar_buf);
+                genCode(gen, "=", tempVar_buf, "", result);
             }
             break;
             
         case NODE_WRITE:
             if (ast->childrenCount > 0) {
+                char tempVar_buf[32];
                 char *tempVar = getTempVar(gen);
-                generateIntermediateCodeExpr(ast->children[0], gen, table, tempVar);
-                genCode(gen, "WRITE", tempVar, "", "");
+                strcpy(tempVar_buf, tempVar);
+                generateIntermediateCodeExpr(ast->children[0], gen, table, tempVar_buf);
+                genCode(gen, "WRITE", tempVar_buf, "", "");
             }
             break;
             
@@ -165,9 +169,11 @@ void generateIntermediateCode(ASTNode *ast, CodeGenerator *gen, SymbolTable *tab
         case NODE_RETURN_STMT: {
             /* 返回语句 */
             if (ast->childrenCount > 0) {
+                char tempVar_buf[32];
                 char *tempVar = getTempVar(gen);
-                generateIntermediateCodeExpr(ast->children[0], gen, table, tempVar);
-                genCode(gen, "RET", tempVar, "", "");
+                strcpy(tempVar_buf, tempVar);
+                generateIntermediateCodeExpr(ast->children[0], gen, table, tempVar_buf);
+                genCode(gen, "RET", tempVar_buf, "", "");
             } else {
                 genCode(gen, "RET", "", "", "");
             }
@@ -200,20 +206,25 @@ void generateIntermediateCodeExpr(ASTNode *ast, CodeGenerator *gen, SymbolTable 
             
         case NODE_BINOP: {
             if (ast->childrenCount >= 2) {
+                char temp1_buf[32], temp2_buf[32];
                 temp1 = getTempVar(gen);
+                strcpy(temp1_buf, temp1);
                 temp2 = getTempVar(gen);
-                generateIntermediateCodeExpr(ast->children[0], gen, table, temp1);
-                generateIntermediateCodeExpr(ast->children[1], gen, table, temp2);
-                genCode(gen, getOpString(ast->op), temp1, temp2, result);
+                strcpy(temp2_buf, temp2);
+                generateIntermediateCodeExpr(ast->children[0], gen, table, temp1_buf);
+                generateIntermediateCodeExpr(ast->children[1], gen, table, temp2_buf);
+                genCode(gen, getOpString(ast->op), temp1_buf, temp2_buf, result);
             }
             break;
         }
             
         case NODE_UNOP:
             if (ast->childrenCount > 0) {
+                char temp1_buf[32];
                 temp1 = getTempVar(gen);
-                generateIntermediateCodeExpr(ast->children[0], gen, table, temp1);
-                genCode(gen, getOpString(ast->op), temp1, "", result);
+                strcpy(temp1_buf, temp1);
+                generateIntermediateCodeExpr(ast->children[0], gen, table, temp1_buf);
+                genCode(gen, getOpString(ast->op), temp1_buf, "", result);
             }
             break;
             
@@ -231,10 +242,12 @@ void generateIntermediateCodeExpr(ASTNode *ast, CodeGenerator *gen, SymbolTable 
                         
                         /* 为每个参数生成代码 */
                         for (int i = 0; i < argList->childrenCount; i++) {
+                            char argTemp_buf[32];
                             char *argTemp = getTempVar(gen);
-                            generateIntermediateCodeExpr(argList->children[i], gen, table, argTemp);
+                            strcpy(argTemp_buf, argTemp);
+                            generateIntermediateCodeExpr(argList->children[i], gen, table, argTemp_buf);
                             /* PARAM 操作符，参数在 arg1 */
-                            genCode(gen, "PARAM", argTemp, "", "");
+                            genCode(gen, "PARAM", argTemp_buf, "", "");
                         }
                     }
                     

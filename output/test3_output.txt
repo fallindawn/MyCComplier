@@ -161,30 +161,30 @@ Num   Op              Arg1                 Arg2                 Result
 5     =               t0                                        x                   
 6     =               4                                         t1                  
 7     =               t1                                        y                   
-8     =               x                                         t4                  
+8     =               x                                         t3                  
 9     =               y                                         t4                  
-10    +               t4                   t4                   t4                  
-11    =               t4                                        z                   
-12    =               x                                         t7                  
+10    +               t3                   t4                   t2                  
+11    =               t2                                        z                   
+12    =               x                                         t6                  
 13    =               y                                         t7                  
-14    -               t7                   t7                   t7                  
-15    =               t7                                        z                   
-16    =               x                                         t10                 
+14    -               t6                   t7                   t5                  
+15    =               t5                                        z                   
+16    =               x                                         t9                  
 17    =               y                                         t10                 
-18    *               t10                  t10                  t10                 
-19    =               t10                                       z                   
-20    =               x                                         t13                 
+18    *               t9                   t10                  t8                  
+19    =               t8                                        z                   
+20    =               x                                         t12                 
 21    =               y                                         t13                 
-22    /               t13                  t13                  t13                 
-23    =               t13                                       z                   
-24    =               x                                         t16                 
+22    /               t12                  t13                  t11                 
+23    =               t11                                       z                   
+24    =               x                                         t15                 
 25    =               y                                         t16                 
-26    %               t16                  t16                  t16                 
-27    =               t16                                       z                   
-28    =               2                                         t19                 
+26    %               t15                  t16                  t14                 
+27    =               t14                                       z                   
+28    =               2                                         t18                 
 29    =               8                                         t19                 
-30    ^               t19                  t19                  t19                 
-31    =               t19                                       z                   
+30    ^               t18                  t19                  t17                 
+31    =               t17                                       z                   
 32    =               z                                         t20                 
 33    WRITE           t20                                                           
 34    =               0                                         t21                 
@@ -222,59 +222,59 @@ main:
     mov eax, t1
     mov [y], eax
     mov eax, x
-    mov [t4], eax
+    mov [t3], eax
     mov eax, y
     mov [t4], eax
-    mov eax, [t4]
+    mov eax, [t3]
     mov ebx, [t4]
     add eax, ebx
-    mov [t4], eax
-    mov eax, t4
+    mov [t2], eax
+    mov eax, t2
     mov [z], eax
     mov eax, x
-    mov [t7], eax
+    mov [t6], eax
     mov eax, y
     mov [t7], eax
-    mov eax, [t7]
+    mov eax, [t6]
     mov ebx, [t7]
     sub eax, ebx
-    mov [t7], eax
-    mov eax, t7
+    mov [t5], eax
+    mov eax, t5
     mov [z], eax
     mov eax, x
-    mov [t10], eax
+    mov [t9], eax
     mov eax, y
     mov [t10], eax
-    mov eax, [t10]
+    mov eax, [t9]
     mov ebx, [t10]
     imul eax, ebx
-    mov [t10], eax
-    mov eax, t10
+    mov [t8], eax
+    mov eax, t8
     mov [z], eax
     mov eax, x
-    mov [t13], eax
+    mov [t12], eax
     mov eax, y
     mov [t13], eax
-    mov eax, [t13]
+    mov eax, [t12]
     mov ebx, [t13]
     cdq
     idiv ebx
-    mov [t13], eax
-    mov eax, t13
+    mov [t11], eax
+    mov eax, t11
     mov [z], eax
     mov eax, x
-    mov [t16], eax
+    mov [t15], eax
     mov eax, y
     mov [t16], eax
-    ;;; % t16, t16 -> t16
-    mov eax, t16
+    ;;; % t15, t16 -> t14
+    mov eax, t14
     mov [z], eax
     mov eax, 2
-    mov [t19], eax
+    mov [t18], eax
     mov eax, 8
     mov [t19], eax
-    ;;; ^ t19, t19 -> t19
-    mov eax, t19
+    ;;; ^ t18, t19 -> t17
+    mov eax, t17
     mov [z], eax
     mov eax, z
     mov [t20], eax
