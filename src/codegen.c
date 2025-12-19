@@ -177,6 +177,24 @@ void printIntermediateCode(CodeGenerator *gen) {
     printf("====================================================\n\n");
 }
 
+void printIntermediateCodeToFile(CodeGenerator *gen, FILE *file) {
+    if (gen == NULL || file == NULL) return;
+    
+    fprintf(file, "\n========== Intermediate Code (Quadruples) ==========\n");
+    fprintf(file, "%-5s %-15s %-20s %-20s %-20s\n", "Num", "Op", "Arg1", "Arg2", "Result");
+    fprintf(file, "-----------------------------------------------------\n");
+    
+    for (int i = 0; i < gen->count; i++) {
+        fprintf(file, "%-5d %-15s %-20s %-20s %-20s\n", 
+               i, 
+               gen->quads[i].op,
+               gen->quads[i].arg1,
+               gen->quads[i].arg2,
+               gen->quads[i].result);
+    }
+    fprintf(file, "====================================================\n\n");
+}
+
 void freeCodeGenerator(CodeGenerator *gen) {
     if (gen != NULL) {
         if (gen->quads != NULL) {

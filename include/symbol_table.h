@@ -28,6 +28,7 @@ void insertSymbol(SymbolTable *table, const char *name, DataType type, int line)
 Symbol* lookupSymbol(SymbolTable *table, const char *name);
 int isSymbolDefined(SymbolTable *table, const char *name);
 void printSymbolTable(SymbolTable *table);
+void printSymbolTableToFile(SymbolTable *table, FILE *file);
 void freeSymbolTable(SymbolTable *table);
 
 #endif

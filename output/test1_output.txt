@@ -1,0 +1,100 @@
+==================================================
+          C Language Compiler v1.0
+==================================================
+
+Input File: test/test1.c
+
+Starting lexical and syntax analysis...
+
+Syntax analysis completed successfully!
+
+========== Lexical Analysis Results ==========
+No.   Token Type           Lexeme               Line      
+----------------------------------------------
+1     KEYWORD_INT          int                  2         
+2     IDENTIFIER           a                    2         
+3     SEMI                 ;                    2         
+4     KEYWORD_FLOAT        float                3         
+5     IDENTIFIER           b                    3         
+6     SEMI                 ;                    3         
+7     KEYWORD_SHORT        short                4         
+8     IDENTIFIER           c                    4         
+9     SEMI                 ;                    4         
+10    IDENTIFIER           a                    6         
+11    OP_ASSIGN            =                    6         
+12    NUMBER               10                   6         
+13    SEMI                 ;                    6         
+14    IDENTIFIER           b                    7         
+15    OP_ASSIGN            =                    7         
+16    NUMBER               20                   7         
+17    SEMI                 ;                    7         
+18    IDENTIFIER           c                    8         
+19    OP_ASSIGN            =                    8         
+20    IDENTIFIER           a                    8         
+21    OP_PLUS              +                    8         
+22    IDENTIFIER           b                    8         
+23    SEMI                 ;                    8         
+24    KEYWORD_PRINTF       printf               9         
+25    LPAREN               (                    9         
+26    IDENTIFIER           c                    9         
+27    RPAREN               )                    9         
+28    SEMI                 ;                    9         
+==============================================
+
+
+========== Abstract Syntax Tree (AST) ==========
+PROGRAM
+PROGRAM
+  DECL_LIST
+    DECL
+      ID(a)
+    DECL
+      ID(b)
+    DECL
+      ID(c)
+  STMT_LIST
+    ASSIGN
+      ID(a)
+      NUM(10)
+    ASSIGN
+      ID(b)
+      NUM(20)
+    ASSIGN
+      ID(c)
+      BINOP(+)
+        ID(a)
+        ID(b)
+    WRITE
+      ID(c)
+================================================
+
+
+========== Symbol Table ==========
+Name                           Type                 Line      
+-------------------------------------------
+a                              int                  2         
+b                              float                3         
+c                              short                4         
+===================================
+
+Generating intermediate code...
+
+========== Intermediate Code (Quadruples) ==========
+Num   Op              Arg1                 Arg2                 Result              
+-----------------------------------------------------
+0     DECL            a                                                             
+1     DECL            b                                                             
+2     DECL            c                                                             
+3     =               10                                        t0                  
+4     =               t0                                        a                   
+5     =               20                                        t1                  
+6     =               t1                                        b                   
+7     =               a                                         t4                  
+8     =               b                                         t4                  
+9     +               t4                   t4                   t4                  
+10    =               t4                                        c                   
+11    =               c                                         t5                  
+12    WRITE           t5                                                            
+====================================================
+
+Compilation completed successfully!

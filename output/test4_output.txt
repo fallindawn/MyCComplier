@@ -1,0 +1,133 @@
+==================================================
+          C Language Compiler v1.0
+==================================================
+
+Input File: test/test4.c
+
+Starting lexical and syntax analysis...
+
+Syntax analysis completed successfully!
+
+========== Lexical Analysis Results ==========
+No.   Token Type           Lexeme               Line      
+----------------------------------------------
+1     KEYWORD_INT          int                  2         
+2     IDENTIFIER           a                    2         
+3     SEMI                 ;                    2         
+4     KEYWORD_INT          int                  3         
+5     IDENTIFIER           b                    3         
+6     SEMI                 ;                    3         
+7     IDENTIFIER           a                    5         
+8     OP_ASSIGN            =                    5         
+9     NUMBER               1                    5         
+10    SEMI                 ;                    5         
+11    IDENTIFIER           b                    6         
+12    OP_ASSIGN            =                    6         
+13    NUMBER               0                    6         
+14    SEMI                 ;                    6         
+15    KEYWORD_IF           if                   8         
+16    LPAREN               (                    8         
+17    IDENTIFIER           a                    8         
+18    OP_AND               &&                   8         
+19    IDENTIFIER           b                    8         
+20    RPAREN               )                    8         
+21    LBRACE               {                    8         
+22    KEYWORD_PRINTF       printf               9         
+23    LPAREN               (                    9         
+24    NUMBER               0                    9         
+25    RPAREN               )                    9         
+26    SEMI                 ;                    9         
+27    RBRACE               }                    10        
+28    KEYWORD_IF           if                   12        
+29    LPAREN               (                    12        
+30    IDENTIFIER           a                    12        
+31    OP_OR                ||                   12        
+32    IDENTIFIER           b                    12        
+33    RPAREN               )                    12        
+34    LBRACE               {                    12        
+35    KEYWORD_PRINTF       printf               13        
+36    LPAREN               (                    13        
+37    NUMBER               1                    13        
+38    RPAREN               )                    13        
+39    SEMI                 ;                    13        
+40    RBRACE               }                    14        
+41    KEYWORD_IF           if                   16        
+42    LPAREN               (                    16        
+43    OP_NOT               !                    16        
+44    IDENTIFIER           b                    16        
+45    RPAREN               )                    16        
+46    LBRACE               {                    16        
+47    KEYWORD_PRINTF       printf               17        
+48    LPAREN               (                    17        
+49    NUMBER               1                    17        
+50    RPAREN               )                    17        
+51    SEMI                 ;                    17        
+52    RBRACE               }                    18        
+==============================================
+
+
+========== Abstract Syntax Tree (AST) ==========
+PROGRAM
+PROGRAM
+  DECL_LIST
+    DECL
+      ID(a)
+    DECL
+      ID(b)
+  STMT_LIST
+    ASSIGN
+      ID(a)
+      NUM(1)
+    ASSIGN
+      ID(b)
+      NUM(0)
+    IF
+      BINOP(&&)
+        ID(a)
+        ID(b)
+      STMT_LIST
+        WRITE
+          NUM(0)
+    IF
+      BINOP(||)
+        ID(a)
+        ID(b)
+      STMT_LIST
+        WRITE
+          NUM(1)
+    IF
+      UNOP(!)
+        ID(b)
+      STMT_LIST
+        WRITE
+          NUM(1)
+================================================
+
+
+========== Symbol Table ==========
+Name                           Type                 Line      
+-------------------------------------------
+a                              int                  2         
+b                              int                  3         
+===================================
+
+Generating intermediate code...
+
+========== Intermediate Code (Quadruples) ==========
+Num   Op              Arg1                 Arg2                 Result              
+-----------------------------------------------------
+0     DECL            a                                                             
+1     DECL            b                                                             
+2     =               1                                         t0                  
+3     =               t0                                        a                   
+4     =               0                                         t1                  
+5     =               t1                                        b                   
+6     =               0                                         t2                  
+7     WRITE           t2                                                            
+8     =               1                                         t3                  
+9     WRITE           t3                                                            
+10    =               1                                         t4                  
+11    WRITE           t4                                                            
+====================================================
+
+Compilation completed successfully!

@@ -48,6 +48,21 @@ typedef enum {
 /* 数据类型 */
 typedef enum {
     TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_DOUBLE,
+    TYPE_CHAR,
+    TYPE_SHORT,
+    TYPE_LONG,
+    TYPE_LONG_LONG,
+    TYPE_UNSIGNED_INT,
+    TYPE_UNSIGNED_FLOAT,
+    TYPE_UNSIGNED_DOUBLE,
+    TYPE_UNSIGNED_CHAR,
+    TYPE_UNSIGNED_SHORT,
+    TYPE_UNSIGNED_LONG,
+    TYPE_UNSIGNED_LONG_LONG,
+    TYPE_BOOL,
+    TYPE_VOID,
     TYPE_UNKNOWN
 } DataType;
 
@@ -77,5 +92,6 @@ ASTNode* createUnOpNode(OpType op, ASTNode *operand);
 void addChild(ASTNode *parent, ASTNode *child);
 void freeAST(ASTNode *node);
 void printAST(ASTNode *node, int indent);
+void printASTToFile(ASTNode *node, int indent, FILE *file);
 
 #endif

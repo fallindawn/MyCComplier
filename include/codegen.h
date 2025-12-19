@@ -31,6 +31,7 @@ const char* getOpString(OpType op);
 void generateIntermediateCode(ASTNode *ast, CodeGenerator *gen, SymbolTable *table);
 void generateIntermediateCodeExpr(ASTNode *ast, CodeGenerator *gen, SymbolTable *table, char *result);
 void printIntermediateCode(CodeGenerator *gen);
+void printIntermediateCodeToFile(CodeGenerator *gen, FILE *file);
 void freeCodeGenerator(CodeGenerator *gen);
 
 #endif

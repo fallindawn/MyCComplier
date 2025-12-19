@@ -40,6 +40,14 @@ void printTokens() {
 "//".*          { /* 注释 */ }
 
 "int"           { recordToken("KEYWORD_INT", yytext); return INT; }
+"float"         { recordToken("KEYWORD_FLOAT", yytext); return FLOAT; }
+"double"        { recordToken("KEYWORD_DOUBLE", yytext); return DOUBLE; }
+"char"          { recordToken("KEYWORD_CHAR", yytext); return CHAR; }
+"short"         { recordToken("KEYWORD_SHORT", yytext); return SHORT; }
+"long"          { recordToken("KEYWORD_LONG", yytext); return LONG; }
+"unsigned"      { recordToken("KEYWORD_UNSIGNED", yytext); return UNSIGNED; }
+"bool"          { recordToken("KEYWORD_BOOL", yytext); return BOOL; }
+"void"          { recordToken("KEYWORD_VOID", yytext); return VOID; }
 "if"            { recordToken("KEYWORD_IF", yytext); return IF; }
 "else"          { recordToken("KEYWORD_ELSE", yytext); return ELSE; }
 "while"         { recordToken("KEYWORD_WHILE", yytext); return WHILE; }
@@ -81,9 +89,21 @@ void printTokens() {
     return ID;
 }
 
+[0-9]+\.[0-9]+  {
+    recordToken("FLOAT_NUMBER", yytext);
+    yylval.num = (int)atof(yytext);
+    return NUM;
+}
+
 [0-9]+          {
     recordToken("NUMBER", yytext);
     yylval.num = atoi(yytext);
+    return NUM;
+}
+
+'.'             {
+    recordToken("CHAR", yytext);
+    yylval.num = (int)yytext[1];
     return NUM;
 }
 

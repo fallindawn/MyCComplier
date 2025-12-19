@@ -1,0 +1,121 @@
+==================================================
+          C Language Compiler v1.0
+==================================================
+
+Input File: test/test5.c
+
+Starting lexical and syntax analysis...
+
+Syntax analysis completed successfully!
+
+========== Lexical Analysis Results ==========
+No.   Token Type           Lexeme               Line      
+----------------------------------------------
+1     KEYWORD_INT          int                  2         
+2     IDENTIFIER           i                    2         
+3     SEMI                 ;                    2         
+4     KEYWORD_INT          int                  3         
+5     IDENTIFIER           sum                  3         
+6     SEMI                 ;                    3         
+7     IDENTIFIER           sum                  5         
+8     OP_ASSIGN            =                    5         
+9     NUMBER               0                    5         
+10    SEMI                 ;                    5         
+11    KEYWORD_FOR          for                  7         
+12    LPAREN               (                    7         
+13    IDENTIFIER           i                    7         
+14    OP_ASSIGN            =                    7         
+15    NUMBER               1                    7         
+16    SEMI                 ;                    7         
+17    IDENTIFIER           i                    7         
+18    OP_LE                <=                   7         
+19    NUMBER               10                   7         
+20    SEMI                 ;                    7         
+21    IDENTIFIER           i                    7         
+22    OP_ASSIGN            =                    7         
+23    IDENTIFIER           i                    7         
+24    OP_PLUS              +                    7         
+25    NUMBER               1                    7         
+26    RPAREN               )                    7         
+27    LBRACE               {                    7         
+28    IDENTIFIER           sum                  8         
+29    OP_ASSIGN            =                    8         
+30    IDENTIFIER           sum                  8         
+31    OP_PLUS              +                    8         
+32    IDENTIFIER           i                    8         
+33    SEMI                 ;                    8         
+34    RBRACE               }                    9         
+35    KEYWORD_PRINTF       printf               11        
+36    LPAREN               (                    11        
+37    IDENTIFIER           sum                  11        
+38    RPAREN               )                    11        
+39    SEMI                 ;                    11        
+==============================================
+
+
+========== Abstract Syntax Tree (AST) ==========
+PROGRAM
+PROGRAM
+  DECL_LIST
+    DECL
+      ID(i)
+    DECL
+      ID(sum)
+  STMT_LIST
+    ASSIGN
+      ID(sum)
+      NUM(0)
+    FOR
+      ASSIGN
+        ID(i)
+        NUM(1)
+      BINOP(<=)
+        ID(i)
+        NUM(10)
+      ASSIGN
+        ID(i)
+        BINOP(+)
+          ID(i)
+          NUM(1)
+      STMT_LIST
+        ASSIGN
+          ID(sum)
+          BINOP(+)
+            ID(sum)
+            ID(i)
+    WRITE
+      ID(sum)
+================================================
+
+
+========== Symbol Table ==========
+Name                           Type                 Line      
+-------------------------------------------
+i                              int                  2         
+sum                            int                  3         
+===================================
+
+Generating intermediate code...
+
+========== Intermediate Code (Quadruples) ==========
+Num   Op              Arg1                 Arg2                 Result              
+-----------------------------------------------------
+0     DECL            i                                                             
+1     DECL            sum                                                           
+2     =               0                                         t0                  
+3     =               t0                                        sum                 
+4     =               1                                         t1                  
+5     =               t1                                        i                   
+6     =               i                                         t4                  
+7     =               1                                         t4                  
+8     +               t4                   t4                   t4                  
+9     =               t4                                        i                   
+10    =               sum                                       t7                  
+11    =               i                                         t7                  
+12    +               t7                   t7                   t7                  
+13    =               t7                                        sum                 
+14    =               sum                                       t8                  
+15    WRITE           t8                                                            
+====================================================
+
+Compilation completed successfully!

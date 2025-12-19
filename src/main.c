@@ -4,6 +4,7 @@
 #include "ast.h"
 #include "symbol_table.h"
 #include "codegen.h"
+#include "lexer.h"
 
 extern ASTNode *root;
 extern SymbolTable *symTable;
@@ -14,6 +15,9 @@ extern FILE *yyin;
 
 int main(int argc, char *argv[]) {
     FILE *input_file = NULL;
+    FILE *output_file = NULL;
+    char output_filename[512];
+    char input_basename[256];
     
     printf("==================================================\n");
     printf("          C Language Compiler v1.0\n");
@@ -31,41 +35,102 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
+    /* 获取输入文件的基础名称 */
+    const char *basename_ptr = argv[1];
+    for (int i = strlen(argv[1]) - 1; i >= 0; i--) {
+        if (argv[1][i] == '\\' || argv[1][i] == '/') {
+            basename_ptr = &argv[1][i + 1];
+            break;
+        }
+    }
+    
+    strcpy(input_basename, basename_ptr);
+    /* 移除扩展名 */
+    char *dot_pos = strchr(input_basename, '.');
+    if (dot_pos != NULL) {
+        *dot_pos = '\0';
+    }
+    
+    /* 生成输出文件路径 */
+    snprintf(output_filename, sizeof(output_filename), "output/%s_output.txt", input_basename);
+    
+    /* 打开输出文件 */
+    output_file = fopen(output_filename, "w");
+    if (output_file == NULL) {
+        /* 尝试创建 output 目录（如果不存在） */
+        system("mkdir output 2>nul || exit /b 0");
+        output_file = fopen(output_filename, "w");
+        if (output_file == NULL) {
+            fprintf(stderr, "Error: Cannot create output file '%s'\n", output_filename);
+            fclose(input_file);
+            return 1;
+        }
+    }
+    
     /* 初始化 */
     symTable = createSymbolTable();
     codeGen = createCodeGenerator();
     yyin = input_file;
     
     printf("Input File: %s\n\n", argv[1]);
+    fprintf(output_file, "==================================================\n");
+    fprintf(output_file, "          C Language Compiler v1.0\n");
+    fprintf(output_file, "==================================================\n\n");
+    fprintf(output_file, "Input File: %s\n\n", argv[1]);
     
     /* 词法分析和语法分析 */
     printf("Starting lexical and syntax analysis...\n\n");
+    fprintf(output_file, "Starting lexical and syntax analysis...\n\n");
     int result = yyparse();
     
     if (result == 0) {
         printf("Syntax analysis completed successfully!\n\n");
+        fprintf(output_file, "Syntax analysis completed successfully!\n\n");
         
-        /* 打印词法分析结果 */
+        /* 打印词法分析结果到输出文件 */
+        fprintf(output_file, "========== Lexical Analysis Results ==========\n");
+        fprintf(output_file, "%-5s %-20s %-20s %-10s\n", "No.", "Token Type", "Lexeme", "Line");
+        fprintf(output_file, "----------------------------------------------\n");
+        extern TokenRecord tokenRecords[];
+        extern int recordCount;
+        for (int i = 0; i < recordCount; i++) {
+            fprintf(output_file, "%-5d %-20s %-20s %-10d\n", i+1, tokenRecords[i].token, 
+                    tokenRecords[i].lexeme, tokenRecords[i].lineNum);
+        }
+        fprintf(output_file, "==============================================\n\n");
+        
+        /* 打印词法分析结果到控制台 */
         printTokens();
         
         /* 打印语法树 */
         if (root != NULL) {
+            fprintf(output_file, "\n========== Abstract Syntax Tree (AST) ==========\n");
+            fprintf(output_file, "PROGRAM\n");
+            /* 递归打印 AST 到文件 */
+            printASTToFile(root, 0, output_file);
+            fprintf(output_file, "================================================\n\n");
+            
             printf("\n========== Abstract Syntax Tree (AST) ==========\n");
             printAST(root, 0);
             printf("================================================\n\n");
         }
         
         /* 打印符号表 */
+        printSymbolTableToFile(symTable, output_file);
         printSymbolTable(symTable);
         
         /* 生成中间代码 */
         printf("Generating intermediate code...\n");
+        fprintf(output_file, "Generating intermediate code...\n");
         generateIntermediateCode(root, codeGen, symTable);
+        printIntermediateCodeToFile(codeGen, output_file);
         printIntermediateCode(codeGen);
         
         printf("Compilation completed successfully!\n");
+        fprintf(output_file, "Compilation completed successfully!\n");
     } else {
         fprintf(stderr, "Compilation failed!\n");
+        fprintf(output_file, "Compilation failed!\n");
     }
     
     /* 清理 */
@@ -80,6 +145,10 @@ int main(int argc, char *argv[]) {
     }
     if (input_file != NULL) {
         fclose(input_file);
+    }
+    if (output_file != NULL) {
+        fclose(output_file);
+        printf("Output saved to: %s\n", output_filename);
     }
     
     return result;

@@ -1,7 +1,7 @@
 /* Test Case 1: Basic Declaration and Assignment */
 int a;
-int b;
-int c;
+float b;
+short c;
 
 a = 10;
 b = 20;

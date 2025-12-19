@@ -30,10 +30,23 @@
 3.1 支持的语言特性：
 
 【数据类型】
-- int：整数类型
+- 基本整数类型：int, short, long, long long
+- 浮点类型：float, double
+- 字符类型：char
+- 布尔类型：bool
+- 空类型：void
+- 无符号类型：unsigned int, unsigned short, unsigned long, unsigned long long, unsigned char
 
 【声明】
-- 变量声明：int var_name;
+- 基本声明：int var_name;
+- 各类型声明：float x; double y; char ch; bool flag; 等
+- 无符号类型声明：unsigned int u_a; unsigned char u_ch; 等
+
+【字面量】
+- 整数字面量：100, 200, -50
+- 浮点字面量：3.14, 2.71828, -1.5
+- 字符字面量：'A', 'B', '0'
+- 字符串字面量："hello"
 
 【语句】
 - 赋值语句：var = expr;

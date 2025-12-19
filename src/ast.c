@@ -145,3 +145,24 @@ void printAST(ASTNode *node, int indent) {
         printAST(node->children[i], indent + 1);
     }
 }
+
+void printASTToFile(ASTNode *node, int indent, FILE *file) {
+    if (node == NULL || file == NULL) return;
+    
+    for (int i = 0; i < indent; i++) fprintf(file, "  ");
+    fprintf(file, "%s", getNodeTypeName(node->type));
+    
+    if (node->type == NODE_NUM) {
+        fprintf(file, "(%d)", node->intValue);
+    } else if (node->type == NODE_ID) {
+        fprintf(file, "(%s)", node->name);
+    } else if (node->type == NODE_BINOP || node->type == NODE_UNOP) {
+        fprintf(file, "(%s)", getOpName(node->op));
+    }
+    
+    fprintf(file, "\n");
+    
+    for (int i = 0; i < node->childrenCount; i++) {
+        printASTToFile(node->children[i], indent + 1, file);
+    }
+}

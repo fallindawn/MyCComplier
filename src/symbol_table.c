@@ -47,14 +47,70 @@ void printSymbolTable(SymbolTable *table) {
     if (table == NULL) return;
     
     printf("\n========== Symbol Table ==========\n");
-    printf("%-30s %-15s %-10s\n", "Name", "Type", "Line");
-    printf("-----------------------------------\n");
+    printf("%-30s %-20s %-10s\n", "Name", "Type", "Line");
+    printf("-------------------------------------------\n");
     
     for (int i = 0; i < table->count; i++) {
-        const char *typeStr = table->symbols[i].type == TYPE_INT ? "int" : "unknown";
-        printf("%-30s %-15s %-10d\n", table->symbols[i].name, typeStr, table->symbols[i].line);
+        const char *typeStr = "unknown";
+        
+        switch(table->symbols[i].type) {
+            case TYPE_INT: typeStr = "int"; break;
+            case TYPE_FLOAT: typeStr = "float"; break;
+            case TYPE_DOUBLE: typeStr = "double"; break;
+            case TYPE_CHAR: typeStr = "char"; break;
+            case TYPE_SHORT: typeStr = "short"; break;
+            case TYPE_LONG: typeStr = "long"; break;
+            case TYPE_LONG_LONG: typeStr = "long long"; break;
+            case TYPE_UNSIGNED_INT: typeStr = "unsigned int"; break;
+            case TYPE_UNSIGNED_FLOAT: typeStr = "unsigned float"; break;
+            case TYPE_UNSIGNED_DOUBLE: typeStr = "unsigned double"; break;
+            case TYPE_UNSIGNED_CHAR: typeStr = "unsigned char"; break;
+            case TYPE_UNSIGNED_SHORT: typeStr = "unsigned short"; break;
+            case TYPE_UNSIGNED_LONG: typeStr = "unsigned long"; break;
+            case TYPE_UNSIGNED_LONG_LONG: typeStr = "unsigned long long"; break;
+            case TYPE_BOOL: typeStr = "bool"; break;
+            case TYPE_VOID: typeStr = "void"; break;
+            case TYPE_UNKNOWN: typeStr = "unknown"; break;
+        }
+        
+        printf("%-30s %-20s %-10d\n", table->symbols[i].name, typeStr, table->symbols[i].line);
     }
-    printf("==================================\n\n");
+    printf("===================================\n\n");
+}
+
+void printSymbolTableToFile(SymbolTable *table, FILE *file) {
+    if (table == NULL || file == NULL) return;
+    
+    fprintf(file, "\n========== Symbol Table ==========\n");
+    fprintf(file, "%-30s %-20s %-10s\n", "Name", "Type", "Line");
+    fprintf(file, "-------------------------------------------\n");
+    
+    for (int i = 0; i < table->count; i++) {
+        const char *typeStr = "unknown";
+        
+        switch(table->symbols[i].type) {
+            case TYPE_INT: typeStr = "int"; break;
+            case TYPE_FLOAT: typeStr = "float"; break;
+            case TYPE_DOUBLE: typeStr = "double"; break;
+            case TYPE_CHAR: typeStr = "char"; break;
+            case TYPE_SHORT: typeStr = "short"; break;
+            case TYPE_LONG: typeStr = "long"; break;
+            case TYPE_LONG_LONG: typeStr = "long long"; break;
+            case TYPE_UNSIGNED_INT: typeStr = "unsigned int"; break;
+            case TYPE_UNSIGNED_FLOAT: typeStr = "unsigned float"; break;
+            case TYPE_UNSIGNED_DOUBLE: typeStr = "unsigned double"; break;
+            case TYPE_UNSIGNED_CHAR: typeStr = "unsigned char"; break;
+            case TYPE_UNSIGNED_SHORT: typeStr = "unsigned short"; break;
+            case TYPE_UNSIGNED_LONG: typeStr = "unsigned long"; break;
+            case TYPE_UNSIGNED_LONG_LONG: typeStr = "unsigned long long"; break;
+            case TYPE_BOOL: typeStr = "bool"; break;
+            case TYPE_VOID: typeStr = "void"; break;
+            case TYPE_UNKNOWN: typeStr = "unknown"; break;
+        }
+        
+        fprintf(file, "%-30s %-20s %-10d\n", table->symbols[i].name, typeStr, table->symbols[i].line);
+    }
+    fprintf(file, "===================================\n\n");
 }
 
 void freeSymbolTable(SymbolTable *table) {

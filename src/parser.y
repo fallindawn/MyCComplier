@@ -38,7 +38,7 @@ CodeGenerator *codeGen = NULL;
     ASTNode *node;
 }
 
-%token INT IF ELSE WHILE FOR SCANF PRINTF
+%token INT FLOAT DOUBLE CHAR SHORT LONG UNSIGNED BOOL VOID IF ELSE WHILE FOR SCANF PRINTF
 %token PLUS MINUS MULT DIV MOD POW
 %token EQ NE LT GT LE GE
 %token AND OR NOT
@@ -102,6 +102,97 @@ decl
             ASTNode *idNode = createIdNode($2);
             addChild($$, idNode);
             insertSymbol(symTable, $2, TYPE_INT, lineNum);
+        }
+    | FLOAT ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_FLOAT, lineNum);
+        }
+    | DOUBLE ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_DOUBLE, lineNum);
+        }
+    | CHAR ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_CHAR, lineNum);
+        }
+    | SHORT ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_SHORT, lineNum);
+        }
+    | LONG ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_LONG, lineNum);
+        }
+    | LONG LONG ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($3);
+            addChild($$, idNode);
+            insertSymbol(symTable, $3, TYPE_LONG_LONG, lineNum);
+        }
+    | BOOL ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_BOOL, lineNum);
+        }
+    | VOID ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_VOID, lineNum);
+        }
+    | UNSIGNED INT ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($3);
+            addChild($$, idNode);
+            insertSymbol(symTable, $3, TYPE_UNSIGNED_INT, lineNum);
+        }
+    | UNSIGNED CHAR ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($3);
+            addChild($$, idNode);
+            insertSymbol(symTable, $3, TYPE_UNSIGNED_CHAR, lineNum);
+        }
+    | UNSIGNED SHORT ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($3);
+            addChild($$, idNode);
+            insertSymbol(symTable, $3, TYPE_UNSIGNED_SHORT, lineNum);
+        }
+    | UNSIGNED LONG ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($3);
+            addChild($$, idNode);
+            insertSymbol(symTable, $3, TYPE_UNSIGNED_LONG, lineNum);
+        }
+    | UNSIGNED LONG LONG ID SEMI
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($4);
+            addChild($$, idNode);
+            insertSymbol(symTable, $4, TYPE_UNSIGNED_LONG_LONG, lineNum);
         }
     ;
 
