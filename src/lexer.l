@@ -54,6 +54,7 @@ void printTokens() {
 "for"           { recordToken("KEYWORD_FOR", yytext); return FOR; }
 "scanf"         { recordToken("KEYWORD_SCANF", yytext); return SCANF; }
 "printf"        { recordToken("KEYWORD_PRINTF", yytext); return PRINTF; }
+"return"        { recordToken("KEYWORD_RETURN", yytext); return RETURN; }
 
 "+"             { recordToken("OP_PLUS", yytext); return PLUS; }
 "-"             { recordToken("OP_MINUS", yytext); return MINUS; }

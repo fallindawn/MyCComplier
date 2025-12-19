@@ -38,7 +38,7 @@ CodeGenerator *codeGen = NULL;
     ASTNode *node;
 }
 
-%token INT FLOAT DOUBLE CHAR SHORT LONG UNSIGNED BOOL VOID IF ELSE WHILE FOR SCANF PRINTF
+%token INT FLOAT DOUBLE CHAR SHORT LONG UNSIGNED BOOL VOID IF ELSE WHILE FOR SCANF PRINTF RETURN
 %token PLUS MINUS MULT DIV MOD POW
 %token EQ NE LT GT LE GE
 %token AND OR NOT
@@ -48,9 +48,9 @@ CodeGenerator *codeGen = NULL;
 %token <id> ID
 %token <str> STRING
 
-%type <node> program decl_list decl stmt_list stmt
+%type <node> program decl_list decl stmt_list stmt func_decl_list func_decl param_list param
 %type <node> assign_stmt if_stmt while_stmt for_stmt
-%type <node> read_stmt write_stmt expr
+%type <node> read_stmt write_stmt return_stmt func_call_stmt arg_list expr
 %type <node> additive_expr multiplicative_expr
 %type <node> unary_expr primary_expr comparison_expr
 %type <node> logical_and_expr logical_or_expr
@@ -67,7 +67,22 @@ CodeGenerator *codeGen = NULL;
 %%
 
 program
-    : decl_list stmt_list
+    : func_decl_list decl_list stmt_list
+        {
+            $$ = createNode(NODE_PROGRAM);
+            addChild($$, $1);
+            addChild($$, $2);
+            addChild($$, $3);
+            root = $$;
+        }
+    | func_decl_list stmt_list
+        {
+            $$ = createNode(NODE_PROGRAM);
+            addChild($$, $1);
+            addChild($$, $2);
+            root = $$;
+        }
+    | decl_list stmt_list
         {
             $$ = createNode(NODE_PROGRAM);
             addChild($$, $1);
@@ -79,6 +94,140 @@ program
             $$ = createNode(NODE_PROGRAM);
             addChild($$, $1);
             root = $$;
+        }
+    | func_decl_list
+        {
+            $$ = createNode(NODE_PROGRAM);
+            addChild($$, $1);
+            root = $$;
+        }
+    ;
+
+func_decl_list
+    : func_decl
+        {
+            $$ = createNode(NODE_DECL_LIST);
+            addChild($$, $1);
+        }
+    | func_decl_list func_decl
+        {
+            addChild($1, $2);
+            $$ = $1;
+        }
+    ;
+
+func_decl
+    : INT ID LPAREN param_list RPAREN LBRACE stmt_list RBRACE
+        {
+            insertFunction(symTable, $2, TYPE_INT, lineNum);
+            $$ = createNode(NODE_FUNC_DEF);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            if ($4 != NULL) addChild($$, $4);
+            addChild($$, $7);
+        }
+    | INT ID LPAREN RPAREN LBRACE stmt_list RBRACE
+        {
+            insertFunction(symTable, $2, TYPE_INT, lineNum);
+            $$ = createNode(NODE_FUNC_DEF);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            addChild($$, $6);
+        }
+    | FLOAT ID LPAREN param_list RPAREN LBRACE stmt_list RBRACE
+        {
+            insertFunction(symTable, $2, TYPE_FLOAT, lineNum);
+            $$ = createNode(NODE_FUNC_DEF);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            if ($4 != NULL) addChild($$, $4);
+            addChild($$, $7);
+        }
+    | FLOAT ID LPAREN RPAREN LBRACE stmt_list RBRACE
+        {
+            insertFunction(symTable, $2, TYPE_FLOAT, lineNum);
+            $$ = createNode(NODE_FUNC_DEF);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            addChild($$, $6);
+        }
+    | DOUBLE ID LPAREN param_list RPAREN LBRACE stmt_list RBRACE
+        {
+            insertFunction(symTable, $2, TYPE_DOUBLE, lineNum);
+            $$ = createNode(NODE_FUNC_DEF);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            if ($4 != NULL) addChild($$, $4);
+            addChild($$, $7);
+        }
+    | DOUBLE ID LPAREN RPAREN LBRACE stmt_list RBRACE
+        {
+            insertFunction(symTable, $2, TYPE_DOUBLE, lineNum);
+            $$ = createNode(NODE_FUNC_DEF);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            addChild($$, $6);
+        }
+    | VOID ID LPAREN param_list RPAREN LBRACE stmt_list RBRACE
+        {
+            insertFunction(symTable, $2, TYPE_VOID, lineNum);
+            $$ = createNode(NODE_FUNC_DEF);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            if ($4 != NULL) addChild($$, $4);
+            addChild($$, $7);
+        }
+    | VOID ID LPAREN RPAREN LBRACE stmt_list RBRACE
+        {
+            insertFunction(symTable, $2, TYPE_VOID, lineNum);
+            $$ = createNode(NODE_FUNC_DEF);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            addChild($$, $6);
+        }
+    ;
+
+param_list
+    : param
+        {
+            $$ = createNode(NODE_PARAM_LIST);
+            addChild($$, $1);
+        }
+    | param_list COMMA param
+        {
+            addChild($1, $3);
+            $$ = $1;
+        }
+    ;
+
+param
+    : INT ID
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_INT, lineNum);
+        }
+    | FLOAT ID
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_FLOAT, lineNum);
+        }
+    | DOUBLE ID
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_DOUBLE, lineNum);
+        }
+    | CHAR ID
+        {
+            $$ = createNode(NODE_DECL);
+            ASTNode *idNode = createIdNode($2);
+            addChild($$, idNode);
+            insertSymbol(symTable, $2, TYPE_CHAR, lineNum);
         }
     ;
 
@@ -202,7 +351,17 @@ stmt_list
             $$ = createNode(NODE_STMT_LIST);
             addChild($$, $1);
         }
+    | decl
+        {
+            $$ = createNode(NODE_STMT_LIST);
+            addChild($$, $1);
+        }
     | stmt_list stmt
+        {
+            addChild($1, $2);
+            $$ = $1;
+        }
+    | stmt_list decl
         {
             addChild($1, $2);
             $$ = $1;
@@ -220,6 +379,8 @@ stmt
     | for_stmt { $$ = $1; }
     | read_stmt { $$ = $1; }
     | write_stmt { $$ = $1; }
+    | return_stmt { $$ = $1; }
+    | func_call_stmt { $$ = $1; }
     ;
 
 assign_stmt
@@ -303,6 +464,53 @@ write_stmt
         {
             $$ = createNode(NODE_WRITE);
             addChild($$, $5);
+        }
+    ;
+
+return_stmt
+    : RETURN SEMI
+        {
+            $$ = createNode(NODE_RETURN_STMT);
+        }
+    | RETURN expr SEMI
+        {
+            $$ = createNode(NODE_RETURN_STMT);
+            addChild($$, $2);
+        }
+    ;
+
+func_call_stmt
+    : ID LPAREN RPAREN SEMI
+        {
+            if (!isFunctionDefined(symTable, $1)) {
+                fprintf(stderr, "Error at line %d: Function '%s' not defined\n", lineNum, $1);
+            }
+            $$ = createNode(NODE_CALL);
+            ASTNode *idNode = createIdNode($1);
+            addChild($$, idNode);
+        }
+    | ID LPAREN arg_list RPAREN SEMI
+        {
+            if (!isFunctionDefined(symTable, $1)) {
+                fprintf(stderr, "Error at line %d: Function '%s' not defined\n", lineNum, $1);
+            }
+            $$ = createNode(NODE_CALL);
+            ASTNode *idNode = createIdNode($1);
+            addChild($$, idNode);
+            addChild($$, $3);
+        }
+    ;
+
+arg_list
+    : expr
+        {
+            $$ = createNode(NODE_ARG_LIST);
+            addChild($$, $1);
+        }
+    | arg_list COMMA expr
+        {
+            addChild($1, $3);
+            $$ = $1;
         }
     ;
 
@@ -405,10 +613,29 @@ primary_expr
         }
     | ID
         {
-            if (!isSymbolDefined(symTable, $1)) {
+            if (!isSymbolDefined(symTable, $1) && !isFunctionDefined(symTable, $1)) {
                 fprintf(stderr, "Error at line %d: Variable '%s' not declared\n", lineNum, $1);
             }
             $$ = createIdNode($1);
+        }
+    | ID LPAREN RPAREN
+        {
+            if (!isFunctionDefined(symTable, $1)) {
+                fprintf(stderr, "Error at line %d: Function '%s' not defined\n", lineNum, $1);
+            }
+            $$ = createNode(NODE_CALL);
+            ASTNode *idNode = createIdNode($1);
+            addChild($$, idNode);
+        }
+    | ID LPAREN arg_list RPAREN
+        {
+            if (!isFunctionDefined(symTable, $1)) {
+                fprintf(stderr, "Error at line %d: Function '%s' not defined\n", lineNum, $1);
+            }
+            $$ = createNode(NODE_CALL);
+            ASTNode *idNode = createIdNode($1);
+            addChild($$, idNode);
+            addChild($$, $3);
         }
     | LPAREN expr RPAREN
         {

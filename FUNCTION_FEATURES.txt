@@ -1,0 +1,106 @@
+==================================================
+          函数识别功能实现说明
+==================================================
+
+1. 功能概述
+-----------
+在原有编译器的基础上，增加了函数的识别和解析功能，包括：
+- 函数定义（Function Definition）
+- 函数参数（Function Parameters）
+- 函数返回语句（Return Statement）
+- 函数调用（Function Call）
+- 函数符号表管理
+
+2. 实现的修改
+-----------
+
+2.1 词法分析 (lexer.l)
+   - 添加 "return" 关键字识别
+   - 输出 KEYWORD_RETURN token
+
+2.2 语法分析 (parser.y)
+   - 添加函数定义规则 (func_decl)
+   - 支持多种返回类型：int, float, double, void
+   - 添加参数列表规则 (param_list, param)
+   - 添加返回语句规则 (return_stmt)
+   - 添加函数调用语句规则 (func_call_stmt)
+   - 在表达式中支持函数调用
+   - stmt_list 中支持混合声明和语句
+
+2.3 语义分析 (symbol_table.h/c)
+   - 扩展 Symbol 结构体，添加：
+     * SymbolKind：区分变量和函数
+     * FunctionParam：函数参数信息
+     * paramCount, isDefinition 等字段
+   - 新增函数：
+     * insertFunction() - 插入函数符号
+     * addFunctionParam() - 添加函数参数
+     * isFunctionDefined() - 检查函数定义
+
+2.4 AST 节点类型 (ast.h)
+   - NODE_FUNC_DEF - 函数定义节点
+   - NODE_PARAM_LIST - 参数列表节点
+   - NODE_RETURN_STMT - 返回语句节点
+   - NODE_CALL - 函数调用节点
+
+3. 支持的语法
+-----------
+
+3.1 函数定义
+   INT ID LPAREN param_list RPAREN LBRACE stmt_list RBRACE
+   FLOAT ID LPAREN param_list RPAREN LBRACE stmt_list RBRACE
+   DOUBLE ID LPAREN param_list RPAREN LBRACE stmt_list RBRACE
+   VOID ID LPAREN param_list RPAREN LBRACE stmt_list RBRACE
+   
+   支持无参数函数：
+   INT ID LPAREN RPAREN LBRACE stmt_list RBRACE
+
+3.2 参数列表
+   param_list : param | param_list COMMA param
+   
+   param 支持类型：INT, FLOAT, DOUBLE, CHAR
+
+3.3 返回语句
+   RETURN SEMI
+   RETURN expr SEMI
+
+3.4 函数调用
+   - 语句级别：ID LPAREN arg_list RPAREN SEMI
+   - 表达式级别：ID LPAREN arg_list RPAREN
+
+3.5 函数调用中的参数
+   arg_list : expr | arg_list COMMA expr
+
+4. 输出信息
+-----------
+
+4.1 符号表增强
+   - 显示符号类型：variable / function
+   - 对于函数显示返回类型和参数列表
+   示例：
+   Name                    Kind       Type         Line
+   add                     function   int          3
+     Parameters: a: int, b: int
+
+4.2 AST 节点
+   - FUNC_DEF: 表示函数定义
+   - PARAM_LIST: 表示参数列表
+   - RETURN_STMT: 表示返回语句
+   - CALL: 表示函数调用
+
+5. 测试文件
+-----------
+test/test_func.c - 包含三个函数定义和函数调用示例
+
+6. 编译方式
+-----------
+mingw32-make clean
+mingw32-make
+
+或单独编译：
+bison -d -o src/y.tab.c src/parser.y
+flex -o src/lex.yy.c src/lexer.l
+gcc -I./include -g -Wall -c src/*.c -o obj/*.o
+gcc -I./include -g -Wall -o compiler obj/*.o -lm
+
+==================================================
