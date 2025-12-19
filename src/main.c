@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     char input_basename[256];
     
     printf("==================================================\n");
-    printf("          C Language Compiler v1.0\n");
+    printf("          C Language Compiler\n");
     printf("==================================================\n\n");
     
     if (argc < 2) {
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     
     printf("Input File: %s\n\n", argv[1]);
     fprintf(output_file, "==================================================\n");
-    fprintf(output_file, "          C Language Compiler v1.0\n");
+    fprintf(output_file, "          C Language Compiler\n");
     fprintf(output_file, "==================================================\n\n");
     fprintf(output_file, "Input File: %s\n\n", argv[1]);
     

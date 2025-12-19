@@ -2,7 +2,7 @@
           C Language Compiler v1.0
 ==================================================
 
-Input File: test/test1.c
+Input File: .\test\test1.c
 
 Starting lexical and syntax analysis...
 

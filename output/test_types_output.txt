@@ -1,0 +1,249 @@
+==================================================
+          C Language Compiler v1.0
+==================================================
+
+Input File: .\test\test_types.c
+
+Starting lexical and syntax analysis...
+
+Syntax analysis completed successfully!
+
+========== Lexical Analysis Results ==========
+No.   Token Type           Lexeme               Line      
+----------------------------------------------
+1     KEYWORD_INT          int                  4         
+2     IDENTIFIER           a                    4         
+3     SEMI                 ;                    4         
+4     KEYWORD_SHORT        short                5         
+5     IDENTIFIER           b                    5         
+6     SEMI                 ;                    5         
+7     KEYWORD_LONG         long                 6         
+8     IDENTIFIER           c                    6         
+9     SEMI                 ;                    6         
+10    KEYWORD_LONG         long                 7         
+11    KEYWORD_LONG         long                 7         
+12    IDENTIFIER           d                    7         
+13    SEMI                 ;                    7         
+14    KEYWORD_FLOAT        float                10        
+15    IDENTIFIER           x                    10        
+16    SEMI                 ;                    10        
+17    KEYWORD_DOUBLE       double               11        
+18    IDENTIFIER           y                    11        
+19    SEMI                 ;                    11        
+20    KEYWORD_CHAR         char                 14        
+21    IDENTIFIER           ch                   14        
+22    SEMI                 ;                    14        
+23    KEYWORD_UNSIGNED     unsigned             17        
+24    KEYWORD_INT          int                  17        
+25    IDENTIFIER           u_a                  17        
+26    SEMI                 ;                    17        
+27    KEYWORD_UNSIGNED     unsigned             18        
+28    KEYWORD_CHAR         char                 18        
+29    IDENTIFIER           u_ch                 18        
+30    SEMI                 ;                    18        
+31    KEYWORD_UNSIGNED     unsigned             19        
+32    KEYWORD_SHORT        short                19        
+33    IDENTIFIER           u_b                  19        
+34    SEMI                 ;                    19        
+35    KEYWORD_UNSIGNED     unsigned             20        
+36    KEYWORD_LONG         long                 20        
+37    IDENTIFIER           u_c                  20        
+38    SEMI                 ;                    20        
+39    KEYWORD_BOOL         bool                 23        
+40    IDENTIFIER           flag                 23        
+41    SEMI                 ;                    23        
+42    KEYWORD_VOID         void                 26        
+43    IDENTIFIER           func                 26        
+44    SEMI                 ;                    26        
+45    IDENTIFIER           a                    29        
+46    OP_ASSIGN            =                    29        
+47    NUMBER               100                  29        
+48    SEMI                 ;                    29        
+49    IDENTIFIER           x                    30        
+50    OP_ASSIGN            =                    30        
+51    FLOAT_NUMBER         3.14                 30        
+52    SEMI                 ;                    30        
+53    IDENTIFIER           y                    31        
+54    OP_ASSIGN            =                    31        
+55    FLOAT_NUMBER         2.71828              31        
+56    SEMI                 ;                    31        
+57    IDENTIFIER           ch                   32        
+58    OP_ASSIGN            =                    32        
+59    CHAR                 'A'                  32        
+60    SEMI                 ;                    32        
+61    IDENTIFIER           c                    35        
+62    OP_ASSIGN            =                    35        
+63    IDENTIFIER           a                    35        
+64    OP_PLUS              +                    35        
+65    IDENTIFIER           a                    35        
+66    SEMI                 ;                    35        
+67    IDENTIFIER           y                    36        
+68    OP_ASSIGN            =                    36        
+69    IDENTIFIER           x                    36        
+70    OP_MULT              *                    36        
+71    IDENTIFIER           y                    36        
+72    SEMI                 ;                    36        
+73    KEYWORD_IF           if                   39        
+74    LPAREN               (                    39        
+75    IDENTIFIER           a                    39        
+76    OP_GT                >                    39        
+77    NUMBER               50                   39        
+78    RPAREN               )                    39        
+79    LBRACE               {                    39        
+80    KEYWORD_PRINTF       printf               40        
+81    LPAREN               (                    40        
+82    NUMBER               100                  40        
+83    RPAREN               )                    40        
+84    SEMI                 ;                    40        
+85    RBRACE               }                    41        
+86    KEYWORD_WHILE        while                44        
+87    LPAREN               (                    44        
+88    IDENTIFIER           a                    44        
+89    OP_LT                <                    44        
+90    NUMBER               200                  44        
+91    RPAREN               )                    44        
+92    LBRACE               {                    44        
+93    IDENTIFIER           a                    45        
+94    OP_ASSIGN            =                    45        
+95    IDENTIFIER           a                    45        
+96    OP_PLUS              +                    45        
+97    NUMBER               1                    45        
+98    SEMI                 ;                    45        
+99    RBRACE               }                    46        
+==============================================
+
+
+========== Abstract Syntax Tree (AST) ==========
+PROGRAM
+PROGRAM
+  DECL_LIST
+    DECL
+      ID(a)
+    DECL
+      ID(b)
+    DECL
+      ID(c)
+    DECL
+      ID(d)
+    DECL
+      ID(x)
+    DECL
+      ID(y)
+    DECL
+      ID(ch)
+    DECL
+      ID(u_a)
+    DECL
+      ID(u_ch)
+    DECL
+      ID(u_b)
+    DECL
+      ID(u_c)
+    DECL
+      ID(flag)
+    DECL
+      ID(func)
+  STMT_LIST
+    ASSIGN
+      ID(a)
+      NUM(100)
+    ASSIGN
+      ID(x)
+      NUM(3)
+    ASSIGN
+      ID(y)
+      NUM(2)
+    ASSIGN
+      ID(ch)
+      NUM(65)
+    ASSIGN
+      ID(c)
+      BINOP(+)
+        ID(a)
+        ID(a)
+    ASSIGN
+      ID(y)
+      BINOP(*)
+        ID(x)
+        ID(y)
+    IF
+      BINOP(>)
+        ID(a)
+        NUM(50)
+      STMT_LIST
+        WRITE
+          NUM(100)
+    WHILE
+      BINOP(<)
+        ID(a)
+        NUM(200)
+      STMT_LIST
+        ASSIGN
+          ID(a)
+          BINOP(+)
+            ID(a)
+            NUM(1)
+================================================
+
+
+========== Symbol Table ==========
+Name                           Type                 Line      
+-------------------------------------------
+a                              int                  4         
+b                              short                5         
+c                              long                 6         
+d                              long long            7         
+x                              float                10        
+y                              double               11        
+ch                             char                 14        
+u_a                            unsigned int         17        
+u_ch                           unsigned char        18        
+u_b                            unsigned short       19        
+u_c                            unsigned long        20        
+flag                           bool                 23        
+func                           void                 26        
+===================================
+
+Generating intermediate code...
+
+========== Intermediate Code (Quadruples) ==========
+Num   Op              Arg1                 Arg2                 Result              
+-----------------------------------------------------
+0     DECL            a                                                             
+1     DECL            b                                                             
+2     DECL            c                                                             
+3     DECL            d                                                             
+4     DECL            x                                                             
+5     DECL            y                                                             
+6     DECL            ch                                                            
+7     DECL            u_a                                                           
+8     DECL            u_ch                                                          
+9     DECL            u_b                                                           
+10    DECL            u_c                                                           
+11    DECL            flag                                                          
+12    DECL            func                                                          
+13    =               100                                       t0                  
+14    =               t0                                        a                   
+15    =               3                                         t1                  
+16    =               t1                                        x                   
+17    =               2                                         t2                  
+18    =               t2                                        y                   
+19    =               65                                        t3                  
+20    =               t3                                        ch                  
+21    =               a                                         t6                  
+22    =               a                                         t6                  
+23    +               t6                   t6                   t6                  
+24    =               t6                                        c                   
+25    =               x                                         t9                  
+26    =               y                                         t9                  
+27    *               t9                   t9                   t9                  
+28    =               t9                                        y                   
+29    =               100                                       t10                 
+30    WRITE           t10                                                           
+31    =               a                                         t13                 
+32    =               1                                         t13                 
+33    +               t13                  t13                  t13                 
+34    =               t13                                       a                   
+====================================================
+
+Compilation completed successfully!
