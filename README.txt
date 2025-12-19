@@ -8,12 +8,12 @@
 本项目是编译原理实践的大作业，旨在实现一个简单的C语言编译器。
 该编译器能够识别基础的C语言语法，并进行一下操作
 
-- [x] 词法分析
-- [x] 语法分析
-- [x] 类型检查
-- [x] 代码优化
-- [x] 错误分析
-- [x] 汇编程序
+- 词法分析
+- 语法分析
+- 类型检查
+- 代码优化
+- 错误分析
+- 汇编程序
 
 2. 参考资源
 --------
@@ -24,15 +24,17 @@
 - bison https://blog.csdn.net/wp1603710463/article/details/50365640
 - flex和bison联合编译 https://blog.csdn.net/weixin_44007632/article/details/108666375
 - Makefile https://www.cnblogs.com/rednodel/p/4500388.html
-- 代码参考 https://github.com/hopexn/SimpleClangCompiler
+- c代码参考 https://github.com/hopexn/SimpleClangCompiler
 
 本项目与参考代码的主要区别：
-- 完全自主实现了符号表管理系统
-- 自定义的AST（抽象语法树）数据结构
-- 独立开发的四元式中间代码生成器
-- 自主实现了词法分析的token记录和打印功能
-- 支持完整的表达式处理（二元运算、一元运算、优先级等）
-- 完整的语句结构支持（if-else、while、for等）
+- 所有记录都有追踪其行号
+- 符号表管理系统
+- 自定义的AST（抽象语法树）数据结构，能通过 “结构体 + 函数指针” 模拟面向对象
+- 支持完整的表达式处理
+- 引入中间代码抽象层，而非直接从语法树生成目标代码，提升了编译器的可扩展性
+- 函数递归调用支持
+- 错误提示追踪优化
+- 模块化，职责分离
 
 3. 编译器功能
 --------
@@ -51,6 +53,7 @@
 - 基本声明：int var_name;
 - 各类型声明：float x; double y; char ch; bool flag; 等
 - 无符号类型声明：unsigned int u_a; unsigned char u_ch; 等
+- 函数声明: int func_name(param_list);
 
 【字面量】
 - 整数字面量：100, 200, -50
@@ -76,17 +79,16 @@
 
 【词法分析 (Lexical Analysis)】
 - 使用 Flex 工具完成
-- 关键字识别（int, if, else, while, for, scanf, printf）
+- 关键字识别
 - 标识符识别
 - 数字字面值识别
 - 运算符识别
-- 注释处理（/* */ 和 //）
+- 注释处理
 - 行号追踪
 - Token 记录和输出
 
 【语法分析 (Syntax Analysis)】
 - 使用 Yacc 工具完成
-- 采用 LALR(1) 分析算法
 - 进行语义检查（变量声明检查）
 - 语句列表解析
 - 赋值/条件/循环语句解析
@@ -108,34 +110,29 @@
 - 支持表达式求值
 - 支持基本的代码优化框架
 
+【汇编程序 (Assembly Generation)】
+- 生成目标汇编代码
+- 支持寄存器分配和指令选择
+- 支持基本的代码优化
+
 4. 编译系统要求
 --------
 
 4.1 依赖软件：
 - GCC (GNU C Compiler)
 - Flex (Lex 实现)
-- Bison (Yacc 实现) 或 yacc
+- Bison (Yacc 实现)
 - GNU Make
-- 标准 C 库
 
 4.2 在 Windows 上安装依赖：
 
-方法 1：使用 mingw32
 - 安装 mingw32，包含 GCC、Flex、Bison
-
-方法 2：使用 WSL (Windows Subsystem for Linux)
-```
-# 在 WSL 中
-sudo apt update
-sudo apt install build-essential lex yacc
-```
 
 5. 编译和运行步骤
 --------
 
 5.1 编译编译器：
 
-```bash
 # 进入项目目录
 cd MyCComplier
 
@@ -146,21 +143,14 @@ mingw32-make clean
 mingw32-make
 
 # 成功编译后会生成 compiler 可执行文件
-```
 
 5.2 运行编译器：
 
-```bash
 # 编译 C 源文件
 ./compiler test/test1.c
 
 # 编译不同的测试文件
-./compiler test/test2.c
-./compiler test/test3.c
-./compiler test/test4.c
-./compiler test/test5.c
-./compiler test/test_types.c
-```
+./compiler test/对应文件
 
 6. 编译结果说明
 --------
@@ -183,7 +173,10 @@ mingw32-make
 6.4 中间代码 (Intermediate Code)
 - 生成的四元式序列
 - 每个四元式包括：操作符、两个操作数和结果
-- 示例输出：
+
+6.5 汇编代码 (Assembly Code)
+- 生成的汇编指令序列
+- 包括数据段和代码段
 
 7. 测试用例
 --------
@@ -195,16 +188,7 @@ test2.c - 循环和条件语句
 test3.c - 各种算术运算
 test4.c - 逻辑运算
 test5.c - for 循环语句
-test_types.c -新增各种变量声明、赋值
-
-运行所有测试：
-```bash
-for test in test/*.c; do
-    echo "========== Testing $test =========="
-    ./compiler "$test"
-    echo ""
-done
-```
+test_func.c -函数定义和调用
 
 8. 实现细节
 --------
@@ -246,7 +230,8 @@ done
 编译器能够检测和报告以下错误：
 
 - 未声明的变量使用
-- 语法错误（通过 Yacc 的错误恢复）
+- 变量属性错误
+- 语法错误
 - 文件打开失败
 - 语法树构建失败
 
@@ -256,54 +241,209 @@ Error at line X: Description of error
 Warning: Something that might be wrong
 ```
 
-10. 扩展功能建议
---------
-
-以下功能可以进一步实现：
-
-【代码优化】
-- 常量折叠
-- 死代码消除
-- 公共子表达式消除
-- 变量传播优化
-
-【目标代码生成】
-- x86 汇编代码生成
-- 寄存器分配
-- 指令选择优化
-
-【前端改进】
-- 浮点数支持
-- 数组支持
-- 函数定义和调用
-- 结构体和指针
-- 更多控制流语句
-
-【运行时环境】
-- 虚拟机执行器
-- 栈帧管理
-- 内存管理
-
 11. 已知限制
 --------
 
 当前实现的限制：
 
 - 不支持数组和指针
-- 不支持函数定义（仅支持调用 scanf/printf）
 - 中间代码生成较为基础
-- 没有对代码进行优化
 - 符号表未实现作用域隔离
 
 12. 故障排除
 --------
 
-【问题】编译时出现 "command not found: flex" 或 "command not found: bison"
-【解决】安装相应的工具包（见第 4 节）
+【问题】在初始实现中，生成的AST树中，函数定义和return语句显示为"UNKNOWN"。
+【原因分析】
+- `printAST()` 和 `printASTToFile()` 函数缺少 NODE_FUNC_DEF 和 NODE_RETURN_STMT 的处理case
+- 导致这些节点类型无法正确转换为字符串显示
+【解决】
+在 `printAST()` 函数中添加特殊处理：
+case NODE_FUNC_DEF:
+    printf("%*sFUNC_DEF [function]\n", indent, "");
+    // 打印子节点
+    for (int i = 0; i < node->childrenCount; i++) {
+        printAST(node->children[i], indent + 2);
+    }
+    break;
 
-【问题】出现 undefined reference 错误
-【解决】确保所有 .c 文件都被包含在编译中（检查 Makefile）
+case NODE_CALL:
+    printf("%*sCALL [call]\n", indent, "");
+    // 打印子节点
+    for (int i = 0; i < node->childrenCount; i++) {
+        printAST(node->children[i], indent + 2);
+    }
+    break;
 
-【问题】生成的可执行文件无法运行
-【解决】检查文件路径、权限和依赖库
+case NODE_RETURN_STMT:
+    printf("%*sRETURN\n", indent, "");
+    // 打印子节点
+    for (int i = 0; i < node->childrenCount; i++) {
+        printAST(node->children[i], indent + 2);
+    }
+    break;
+
+【问题】函数调用代码生成修复
+在初始实现中，中间代码中完全没有函数调用的PARAM和CALL指令，只有简单的赋值操作。
+【原因分析】
+- `generateIntermediateCodeExpr()` 函数中缺少对函数调用节点 (NODE_CALL) 的处理逻辑
+【解决】
+在 `generateIntermediateCodeExpr()` 函数中添加对 NODE_CALL 的处理：
+case NODE_CALL: {
+    if (ast->childrenCount > 0) {
+        ASTNode *funcName = ast->children[0];
+        
+        if (funcName->type == NODE_ID) {
+            /* 处理函数参数 */
+            if (ast->childrenCount > 1 && ast->children[1]->type == NODE_ARG_LIST) {
+                ASTNode *argList = ast->children[1];
+                
+                /* 为每个参数生成PARAM指令 */
+                for (int i = 0; i < argList->childrenCount; i++) {
+                    char *argTemp = getTempVar(gen);
+                    generateIntermediateCodeExpr(argList->children[i], gen, table, argTemp);
+                    genCode(gen, "PARAM", argTemp, "", "");
+                }
+            }
+            
+            /* 生成CALL指令 */
+            sprintf(funcCall, "CALL %s", funcName->name);
+            genCode(gen, funcCall, "", "", result);
+        }
+    }
+    break;
+}
+
+【问题】函数定义部分（add、subtract等）的代码没有生成，所有代码都放在全局代码中执行。汇编代码中有 `call add` 但没有 `add:` 标签和函数体.
+【原因分析】
+`generateIntermediateCode()` 函数中缺少 NODE_FUNC_DEF 的处理case，导致函数定义节点被当作普通语句列表处理。
+【解决】
+在 `generateIntermediateCode()` 函数中添加对 NODE_FUNC_DEF 的处理：
+case NODE_FUNC_DEF: {
+    if (ast->childrenCount >= 2) {
+        ASTNode *funcName = ast->children[0];
+        ASTNode *paramList = NULL;
+        ASTNode *stmtList = NULL;
+        
+        /* 判断是否有参数列表 */
+        if (ast->childrenCount == 3) {
+            paramList = ast->children[1];
+            stmtList = ast->children[2];
+        } else {
+            stmtList = ast->children[1];
+        }
+        
+        if (funcName->type == NODE_ID) {
+            /* 生成函数标签 */
+            char labelBuf[256];
+            sprintf(labelBuf, "LABEL %s", funcName->name);
+            genCode(gen, labelBuf, "", "", "");
+            
+            /* 生成参数声明 */
+            if (paramList != NULL && paramList->type == NODE_PARAM_LIST) {
+                for (int i = 0; i < paramList->childrenCount; i++) {
+                    ASTNode *param = paramList->children[i];
+                    if (param->type == NODE_DECL && param->childrenCount > 0) {
+                        ASTNode *paramId = param->children[0];
+                        if (paramId->type == NODE_ID) {
+                            genCode(gen, "DECL", paramId->name, "", "");
+                        }
+                    }
+                }
+            }
+            
+            /* 生成函数体代码 */
+            if (stmtList != NULL) {
+                generateIntermediateCode(stmtList, gen, table);
+            }
+            
+            /* 生成函数返回指令 */
+            genCode(gen, "RET", "", "", "");
+        }
+    }
+    break;
+}
+
+
+【问题】中间代码中临时变量被重复赋值，导致计算错误
+【原因分析】
+`getTempVar()` 函数实现问题：
+
+char* getTempVar(CodeGenerator *gen) {
+    static char buf[32];  // 静态缓冲区
+    sprintf(buf, "t%d", gen->tempVarCount++);
+    return buf;  // 返回同一个指针
+
+
+问题在于：
+- 函数返回指向 `static char buf` 的指针
+- 在递归调用中，后续的 `getTempVar()` 会覆盖之前的值
+- 虽然 `genCode()` 会立即进行 `strncpy()` 复制，但在某些嵌套调用中仍然会出现问题
+
+【解决】
+/* NODE_BINOP 修复 */
+case NODE_BINOP: {
+    if (ast->childrenCount >= 2) {
+        char temp1_buf[32], temp2_buf[32];
+        temp1 = getTempVar(gen);
+        strcpy(temp1_buf, temp1);  // 立即复制到本地缓冲区
+        temp2 = getTempVar(gen);
+        strcpy(temp2_buf, temp2);  // 立即复制到本地缓冲区
+        generateIntermediateCodeExpr(ast->children[0], gen, table, temp1_buf);
+        generateIntermediateCodeExpr(ast->children[1], gen, table, temp2_buf);
+        genCode(gen, getOpString(ast->op), temp1_buf, temp2_buf, result);
+    }
+    break;
+}
+
+/* NODE_UNOP 修复 */
+case NODE_UNOP:
+    if (ast->childrenCount > 0) {
+        char temp1_buf[32];
+        temp1 = getTempVar(gen);
+        strcpy(temp1_buf, temp1);
+        generateIntermediateCodeExpr(ast->children[0], gen, table, temp1_buf);
+        genCode(gen, getOpString(ast->op), temp1_buf, "", result);
+    }
+    break;
+
+/* NODE_WRITE 修复 */
+case NODE_WRITE:
+    if (ast->childrenCount > 0) {
+        char tempVar_buf[32];
+        char *tempVar = getTempVar(gen);
+        strcpy(tempVar_buf, tempVar);
+        generateIntermediateCodeExpr(ast->children[0], gen, table, tempVar_buf);
+        genCode(gen, "WRITE", tempVar_buf, "", "");
+    }
+    break;
+
+/* NODE_RETURN_STMT 修复 */
+case NODE_RETURN_STMT: {
+    if (ast->childrenCount > 0) {
+        char tempVar_buf[32];
+        char *tempVar = getTempVar(gen);
+        strcpy(tempVar_buf, tempVar);
+        generateIntermediateCodeExpr(ast->children[0], gen, table, tempVar_buf);
+        genCode(gen, "RET", tempVar_buf, "", "");
+    } else {
+        genCode(gen, "RET", "", "", "");
+    }
+    break;
+}
+
+/* NODE_CALL 修复 */
+for (int i = 0; i < argList->childrenCount; i++) {
+    char argTemp_buf[32];
+    char *argTemp = getTempVar(gen);
+    strcpy(argTemp_buf, argTemp);  // 立即复制
+    generateIntermediateCodeExpr(argList->children[i], gen, table, argTemp_buf);
+    genCode(gen, "PARAM", argTemp_buf, "", "");
+}
+```
+
+**修复的核心思路：**
+1. 调用 `getTempVar()` 获取临时变量名
+2. 立即用 `strcpy()` 复制到本地缓冲区
+3. 使用本地缓冲区作为参数，避免 static 缓冲区被覆盖
 ========================================================================
