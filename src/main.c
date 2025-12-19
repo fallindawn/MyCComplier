@@ -126,6 +126,13 @@ int main(int argc, char *argv[]) {
         printIntermediateCodeToFile(codeGen, output_file);
         printIntermediateCode(codeGen);
         
+        /* 生成汇编代码 */
+        printf("Generating assembly code...\n");
+        fprintf(output_file, "Generating assembly code...\n");
+        generateAssemblyCode(codeGen, symTable);
+        printAssemblyCodeToFile(codeGen, output_file);
+        printAssemblyCode(codeGen);
+        
         printf("Compilation completed successfully!\n");
         fprintf(output_file, "Compilation completed successfully!\n");
     } else {

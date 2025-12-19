@@ -11,6 +11,9 @@ CodeGenerator* createCodeGenerator(void) {
     gen->count = 0;
     gen->tempVarCount = 0;
     gen->labelCount = 0;
+    gen->asmLines = NULL;
+    gen->asmCount = 0;
+    gen->asmCapacity = 0;
     return gen;
 }
 
@@ -200,6 +203,177 @@ void freeCodeGenerator(CodeGenerator *gen) {
         if (gen->quads != NULL) {
             free(gen->quads);
         }
+        if (gen->asmLines != NULL) {
+            free(gen->asmLines);
+        }
         free(gen);
     }
+}
+
+/* 辅助函数：添加汇编代码行 */
+static void addAsmLine(CodeGenerator *gen, const char *line) {
+    if (gen == NULL || line == NULL) return;
+    
+    if (gen->asmLines == NULL) {
+        gen->asmCapacity = 1000;
+        gen->asmLines = (AsmLine *)malloc(gen->asmCapacity * sizeof(AsmLine));
+        gen->asmCount = 0;
+    }
+    
+    if (gen->asmCount >= gen->asmCapacity) {
+        gen->asmCapacity *= 2;
+        gen->asmLines = (AsmLine *)realloc(gen->asmLines, gen->asmCapacity * sizeof(AsmLine));
+    }
+    
+    strncpy(gen->asmLines[gen->asmCount].code, line, 255);
+    gen->asmLines[gen->asmCount].code[255] = '\0';
+    gen->asmCount++;
+}
+
+/* 生成汇编代码 */
+void generateAssemblyCode(CodeGenerator *gen, SymbolTable *table) {
+    if (gen == NULL) return;
+    
+    char line[256];
+    
+    /* 汇编头部 */
+    addAsmLine(gen, ";;; =======================================");
+    addAsmLine(gen, ";;; Generated Assembly Code");
+    addAsmLine(gen, ";;; =======================================");
+    addAsmLine(gen, "");
+    addAsmLine(gen, ".386");
+    addAsmLine(gen, ".model flat, stdcall");
+    addAsmLine(gen, "");
+    
+    /* 数据段 */
+    addAsmLine(gen, ".data");
+    
+    /* 添加变量声明 */
+    if (table != NULL) {
+        for (int i = 0; i < table->count; i++) {
+            if (table->symbols[i].kind == SYM_VARIABLE) {
+                sprintf(line, "    %s dd 0", table->symbols[i].name);
+                addAsmLine(gen, line);
+            }
+        }
+    }
+    addAsmLine(gen, "");
+    
+    /* 代码段 */
+    addAsmLine(gen, ".code");
+    addAsmLine(gen, "");
+    
+    /* 处理每个四元式 */
+    for (int i = 0; i < gen->count; i++) {
+        Quadruple *q = &gen->quads[i];
+        
+        if (strcmp(q->op, "DECL") == 0) {
+            /* 变量声明 - 汇编中已在数据段处理 */
+            sprintf(line, "    ;;; DECL %s", q->arg1);
+            addAsmLine(gen, line);
+        }
+        else if (strcmp(q->op, "=") == 0) {
+            /* 赋值操作 */
+            if (atoi(q->arg1) > -100 && atoi(q->arg1) < 100) {
+                /* 常数 */
+                sprintf(line, "    mov eax, %s", q->arg1);
+            } else {
+                /* 变量 */
+                sprintf(line, "    mov eax, [%s]", q->arg1);
+            }
+            addAsmLine(gen, line);
+            sprintf(line, "    mov [%s], eax", q->result);
+            addAsmLine(gen, line);
+        }
+        else if (strcmp(q->op, "+") == 0) {
+            /* 加法 */
+            sprintf(line, "    mov eax, [%s]", q->arg1);
+            addAsmLine(gen, line);
+            sprintf(line, "    mov ebx, [%s]", q->arg2);
+            addAsmLine(gen, line);
+            addAsmLine(gen, "    add eax, ebx");
+            sprintf(line, "    mov [%s], eax", q->result);
+            addAsmLine(gen, line);
+        }
+        else if (strcmp(q->op, "-") == 0) {
+            /* 减法 */
+            sprintf(line, "    mov eax, [%s]", q->arg1);
+            addAsmLine(gen, line);
+            sprintf(line, "    mov ebx, [%s]", q->arg2);
+            addAsmLine(gen, line);
+            addAsmLine(gen, "    sub eax, ebx");
+            sprintf(line, "    mov [%s], eax", q->result);
+            addAsmLine(gen, line);
+        }
+        else if (strcmp(q->op, "*") == 0) {
+            /* 乘法 */
+            sprintf(line, "    mov eax, [%s]", q->arg1);
+            addAsmLine(gen, line);
+            sprintf(line, "    mov ebx, [%s]", q->arg2);
+            addAsmLine(gen, line);
+            addAsmLine(gen, "    imul eax, ebx");
+            sprintf(line, "    mov [%s], eax", q->result);
+            addAsmLine(gen, line);
+        }
+        else if (strcmp(q->op, "/") == 0) {
+            /* 除法 */
+            sprintf(line, "    mov eax, [%s]", q->arg1);
+            addAsmLine(gen, line);
+            sprintf(line, "    mov ebx, [%s]", q->arg2);
+            addAsmLine(gen, line);
+            addAsmLine(gen, "    cdq");
+            addAsmLine(gen, "    idiv ebx");
+            sprintf(line, "    mov [%s], eax", q->result);
+            addAsmLine(gen, line);
+        }
+        else if (strcmp(q->op, "WRITE") == 0) {
+            /* 输出语句 */
+            sprintf(line, "    ;;; WRITE [%s]", q->arg1);
+            addAsmLine(gen, line);
+            sprintf(line, "    mov eax, [%s]", q->arg1);
+            addAsmLine(gen, line);
+            addAsmLine(gen, "    ;;; 需要调用输出函数（如 printf）");
+        }
+        else if (strcmp(q->op, "READ") == 0) {
+            /* 输入语句 */
+            sprintf(line, "    ;;; READ [%s]", q->arg1);
+            addAsmLine(gen, line);
+            addAsmLine(gen, "    ;;; 需要调用输入函数（如 scanf）");
+        }
+        else {
+            /* 其他操作符 */
+            sprintf(line, "    ;;; %s %s, %s -> %s", q->op, q->arg1, q->arg2, q->result);
+            addAsmLine(gen, line);
+        }
+    }
+    
+    /* 程序结束 */
+    addAsmLine(gen, "");
+    addAsmLine(gen, "    ;;; 程序结束");
+    addAsmLine(gen, "    mov eax, 0");
+    addAsmLine(gen, "    ret");
+    addAsmLine(gen, "");
+    addAsmLine(gen, "end");
+}
+
+/* 打印汇编代码到控制台 */
+void printAssemblyCode(CodeGenerator *gen) {
+    if (gen == NULL) return;
+    
+    printf("\n========== Assembly Code ==========\n");
+    for (int i = 0; i < gen->asmCount; i++) {
+        printf("%s\n", gen->asmLines[i].code);
+    }
+    printf("===================================\n\n");
+}
+
+/* 打印汇编代码到文件 */
+void printAssemblyCodeToFile(CodeGenerator *gen, FILE *file) {
+    if (gen == NULL || file == NULL) return;
+    
+    fprintf(file, "\n========== Assembly Code ==========\n");
+    for (int i = 0; i < gen->asmCount; i++) {
+        fprintf(file, "%s\n", gen->asmLines[i].code);
+    }
+    fprintf(file, "===================================\n\n");
 }

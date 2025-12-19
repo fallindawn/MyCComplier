@@ -1,0 +1,161 @@
+==================================================
+          汇编代码生成功能实现说明
+==================================================
+
+1. 功能概述
+-----------
+在现有编译器的基础上，增加了汇编代码生成功能，可以将中间代码（四元式）
+转换为 x86-32 汇编代码。
+
+2. 实现的修改
+-----------
+
+2.1 头文件 (codegen.h)
+   - 添加 AsmLine 结构体用于存储汇编代码行
+   - 扩展 CodeGenerator 结构体添加：
+     * asmLines：汇编代码行数组
+     * asmCount：当前汇编代码行数
+     * asmCapacity：汇编代码数组容量
+   - 新增函数声明：
+     * generateAssemblyCode() - 生成汇编代码
+     * printAssemblyCode() - 打印汇编代码到控制台
+     * printAssemblyCodeToFile() - 打印汇编代码到文件
+
+2.2 源文件 (codegen.c)
+   - 修改 createCodeGenerator() 初始化汇编相关字段
+   - 添加 addAsmLine() 辅助函数用于添加汇编代码行
+   - 实现 generateAssemblyCode() 函数将四元式转换为汇编
+   - 实现 printAssemblyCode() 和 printAssemblyCodeToFile() 函数
+   - 修改 freeCodeGenerator() 释放汇编代码内存
+
+2.3 主文件 (main.c)
+   - 在中间代码生成后调用 generateAssemblyCode()
+   - 输出汇编代码到控制台和文件
+
+3. 汇编代码架构
+--------------
+
+3.1 汇编头部
+   .386                    ; 使用 80386 指令集
+   .model flat, stdcall    ; 使用平面内存模型
+
+3.2 数据段 (.data)
+   - 为每个全局变量分配 32 位空间（dd 0）
+   示例：
+   .data
+       x dd 0
+       y dd 0
+       z dd 0
+
+3.3 代码段 (.code)
+   - 包含实际的汇编指令
+
+4. 支持的操作转换
+----------------
+
+4.1 变量声明 (DECL)
+   ; DECL variable_name
+   （在数据段声明）
+
+4.2 赋值操作 (=)
+   - 常数赋值：
+     mov eax, 10         ; 将常数加载到 eax
+     mov [var], eax      ; 存储到变量
+   
+   - 变量赋值：
+     mov eax, [src]      ; 从源变量加载
+     mov [dst], eax      ; 存储到目标变量
+
+4.3 加法 (+)
+   mov eax, [arg1]       ; 加载第一个操作数
+   mov ebx, [arg2]       ; 加载第二个操作数
+   add eax, ebx          ; 执行加法
+   mov [result], eax     ; 存储结果
+
+4.4 减法 (-)
+   mov eax, [arg1]
+   mov ebx, [arg2]
+   sub eax, ebx          ; 执行减法
+   mov [result], eax
+
+4.5 乘法 (*)
+   mov eax, [arg1]
+   mov ebx, [arg2]
+   imul eax, ebx         ; 有符号乘法
+   mov [result], eax
+
+4.6 除法 (/)
+   mov eax, [arg1]
+   mov ebx, [arg2]
+   cdq                   ; 符号扩展
+   idiv ebx              ; 有符号除法
+   mov [result], eax
+
+4.7 输入输出 (READ/WRITE)
+   ;;; WRITE [variable]   ; 注释形式
+   mov eax, [variable]   ; 读取变量到 eax
+   ; 需要调用输入输出函数
+
+5. 程序结尾
+----------
+   mov eax, 0            ; 返回值 0
+   ret                   ; 返回
+
+6. 使用方法
+-----------
+
+编译：
+   mingw32-make clean
+   mingw32-make
+
+运行：
+   compiler.exe input.c
+
+输出文件：
+   output/input_output.txt
+
+7. 示例
+-------
+
+输入代码：
+   int x;
+   int y;
+   int z;
+   x = 10;
+   y = 20;
+   z = x + y;
+
+生成的汇编：
+   .386
+   .model flat, stdcall
+   
+   .data
+       x dd 0
+       y dd 0
+       z dd 0
+   
+   .code
+       mov eax, 10
+       mov [x], eax
+       mov eax, 20
+       mov [y], eax
+       mov eax, [x]
+       mov ebx, [y]
+       add eax, ebx
+       mov [z], eax
+       ...
+       mov eax, 0
+       ret
+   
+   end
+
+8. 注意事项
+-----------
+
+- 当前实现基于 x86-32 位汇编
+- 使用 eax, ebx 作为主要工作寄存器
+- 临时变量存储在栈或内存中
+- 输入输出函数调用需要进一步完整实现
+- 函数调用栈帧管理可根据需要扩展
+
+==================================================

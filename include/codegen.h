@@ -12,6 +12,11 @@ typedef struct {
     char result[256];
 } Quadruple;
 
+/* 汇编代码行结构 */
+typedef struct {
+    char code[256];
+} AsmLine;
+
 /* 中间代码生成器 */
 typedef struct {
     Quadruple *quads;
@@ -19,6 +24,10 @@ typedef struct {
     int capacity;
     int tempVarCount;
     int labelCount;
+    /* 汇编代码相关字段 */
+    AsmLine *asmLines;
+    int asmCount;
+    int asmCapacity;
 } CodeGenerator;
 
 /* 函数声明 */
@@ -32,6 +41,10 @@ void generateIntermediateCode(ASTNode *ast, CodeGenerator *gen, SymbolTable *tab
 void generateIntermediateCodeExpr(ASTNode *ast, CodeGenerator *gen, SymbolTable *table, char *result);
 void printIntermediateCode(CodeGenerator *gen);
 void printIntermediateCodeToFile(CodeGenerator *gen, FILE *file);
+/* 汇编代码生成函数 */
+void generateAssemblyCode(CodeGenerator *gen, SymbolTable *table);
+void printAssemblyCode(CodeGenerator *gen);
+void printAssemblyCodeToFile(CodeGenerator *gen, FILE *file);
 void freeCodeGenerator(CodeGenerator *gen);
 
 #endif

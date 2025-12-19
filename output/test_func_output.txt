@@ -268,4 +268,84 @@ Num   Op              Arg1                 Arg2                 Result
 27    WRITE           t9                                                            
 ====================================================
 
+Generating assembly code...
+
+========== Assembly Code ==========
+;;; =======================================
+;;; Generated Assembly Code
+;;; =======================================
+
+.386
+.model flat, stdcall
+
+.data
+    a dd 0
+    b dd 0
+    result dd 0
+    x dd 0
+    y dd 0
+    p dd 0
+    q dd 0
+    c dd 0
+    sum dd 0
+    diff dd 0
+
+.code
+
+    ;;; DECL a
+    ;;; DECL b
+    ;;; DECL result
+    mov eax, a
+    mov [t2], eax
+    mov eax, b
+    mov [t2], eax
+    mov eax, [t2]
+    mov ebx, [t2]
+    add eax, ebx
+    mov [t2], eax
+    mov eax, t2
+    mov [result], eax
+    ;;; DECL x
+    ;;; DECL y
+    ;;; DECL p
+    ;;; DECL q
+    ;;; DECL a
+    ;;; DECL b
+    ;;; DECL c
+    ;;; DECL sum
+    ;;; DECL diff
+    mov eax, 10
+    mov [t3], eax
+    mov eax, t3
+    mov [a], eax
+    mov eax, 5
+    mov [t4], eax
+    mov eax, t4
+    mov [b], eax
+    mov eax, 0
+    mov [t5], eax
+    mov eax, t5
+    mov [c], eax
+    mov eax, t6
+    mov [sum], eax
+    mov eax, t7
+    mov [diff], eax
+    mov eax, sum
+    mov [t8], eax
+    ;;; WRITE [t8]
+    mov eax, [t8]
+    ;;; 需要调用输出函数（如 printf）
+    mov eax, diff
+    mov [t9], eax
+    ;;; WRITE [t9]
+    mov eax, [t9]
+    ;;; 需要调用输出函数（如 printf）
+
+    ;;; 程序结束
+    mov eax, 0
+    ret
+
+end
+===================================
+
 Compilation completed successfully!
