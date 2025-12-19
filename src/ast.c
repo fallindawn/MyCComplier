@@ -85,6 +85,8 @@ const char* getNodeTypeName(NodeType type) {
         case NODE_PROGRAM: return "PROGRAM";
         case NODE_DECL_LIST: return "DECL_LIST";
         case NODE_DECL: return "DECL";
+        case NODE_FUNC_DEF: return "FUNC_DEF";
+        case NODE_PARAM_LIST: return "PARAM_LIST";
         case NODE_STMT_LIST: return "STMT_LIST";
         case NODE_STMT: return "STMT";
         case NODE_ASSIGN: return "ASSIGN";
@@ -93,6 +95,7 @@ const char* getNodeTypeName(NodeType type) {
         case NODE_FOR: return "FOR";
         case NODE_READ: return "READ";
         case NODE_WRITE: return "WRITE";
+        case NODE_RETURN_STMT: return "RETURN";
         case NODE_EXPR: return "EXPR";
         case NODE_BINOP: return "BINOP";
         case NODE_UNOP: return "UNOP";
@@ -137,6 +140,10 @@ void printAST(ASTNode *node, int indent) {
         printf("(%s)", node->name);
     } else if (node->type == NODE_BINOP || node->type == NODE_UNOP) {
         printf("(%s)", getOpName(node->op));
+    } else if (node->type == NODE_FUNC_DEF) {
+        printf(" [function]");
+    } else if (node->type == NODE_CALL) {
+        printf(" [call]");
     }
     
     printf("\n");
@@ -158,6 +165,10 @@ void printASTToFile(ASTNode *node, int indent, FILE *file) {
         fprintf(file, "(%s)", node->name);
     } else if (node->type == NODE_BINOP || node->type == NODE_UNOP) {
         fprintf(file, "(%s)", getOpName(node->op));
+    } else if (node->type == NODE_FUNC_DEF) {
+        fprintf(file, " [function]");
+    } else if (node->type == NODE_CALL) {
+        fprintf(file, " [call]");
     }
     
     fprintf(file, "\n");

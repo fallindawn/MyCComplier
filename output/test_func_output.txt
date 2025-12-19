@@ -132,9 +132,9 @@ No.   Token Type           Lexeme               Line
 PROGRAM
 PROGRAM
   DECL_LIST
-    UNKNOWN
+    FUNC_DEF [function]
       ID(add)
-      UNKNOWN
+      PARAM_LIST
         DECL
           ID(a)
         DECL
@@ -147,29 +147,29 @@ PROGRAM
           BINOP(+)
             ID(a)
             ID(b)
-        UNKNOWN
+        RETURN
           ID(result)
-    UNKNOWN
+    FUNC_DEF [function]
       ID(subtract)
-      UNKNOWN
+      PARAM_LIST
         DECL
           ID(x)
         DECL
           ID(y)
       STMT_LIST
-        UNKNOWN
+        RETURN
           BINOP(-)
             ID(x)
             ID(y)
-    UNKNOWN
+    FUNC_DEF [function]
       ID(divide)
-      UNKNOWN
+      PARAM_LIST
         DECL
           ID(p)
         DECL
           ID(q)
       STMT_LIST
-        UNKNOWN
+        RETURN
           BINOP(/)
             ID(p)
             ID(q)
@@ -196,14 +196,14 @@ PROGRAM
       NUM(0)
     ASSIGN
       ID(sum)
-      CALL
+      CALL [call]
         ID(add)
         ARG_LIST
           ID(a)
           ID(b)
     ASSIGN
       ID(diff)
-      CALL
+      CALL [call]
         ID(subtract)
         ARG_LIST
           ID(a)
