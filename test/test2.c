@@ -11,5 +11,5 @@ while (i < 10) {
 }
 
 if (a > 30) {
-    printf(a);
+    printf("%d\n", a);
 }

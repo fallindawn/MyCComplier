@@ -24,4 +24,4 @@ z = x % y;
 /* Power */
 z = 2 ^ 8;
 
-printf(z);
+printf("%d\n", z);

@@ -6,13 +6,13 @@ a = 1;
 b = 0;
 
 if (a && b) {
-    printf(0);
+    printf("0");
 }
 
 if (a || b) {
-    printf(1);
+    printf("1");
 }
 
 if (!b) {
-    printf(1);
+    printf("1");
 }
