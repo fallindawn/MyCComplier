@@ -28,14 +28,13 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     
-    /* 打开输入文件 */
+    /* 打开输入 */
     input_file = fopen(argv[1], "r");
     if (input_file == NULL) {
         fprintf(stderr, "Error: Cannot open file '%s'\n", argv[1]);
         return 1;
     }
     
-    /* 获取输入文件的基础名称 */
     const char *basename_ptr = argv[1];
     for (int i = strlen(argv[1]) - 1; i >= 0; i--) {
         if (argv[1][i] == '\\' || argv[1][i] == '/') {
@@ -51,7 +50,7 @@ int main(int argc, char *argv[]) {
         *dot_pos = '\0';
     }
     
-    /* 生成输出文件路径 */
+    /* 路径 */
     snprintf(output_filename, sizeof(output_filename), "output/%s_output.txt", input_basename);
     
     /* 打开输出文件 */
@@ -87,7 +86,7 @@ int main(int argc, char *argv[]) {
         printf("Syntax analysis completed successfully!\n\n");
         fprintf(output_file, "Syntax analysis completed successfully!\n\n");
         
-        /* 打印词法分析结果到输出文件 */
+        /* 打印词法分析结果->文件（1） */
         fprintf(output_file, "========== Lexical Analysis Results ==========\n");
         fprintf(output_file, "%-5s %-20s %-20s %-10s\n", "No.", "Token Type", "Lexeme", "Line");
         fprintf(output_file, "----------------------------------------------\n");
@@ -99,14 +98,14 @@ int main(int argc, char *argv[]) {
         }
         fprintf(output_file, "==============================================\n\n");
         
-        /* 打印词法分析结果到控制台 */
+        /* 打印词法分析结果->控制台（2） */
         printTokens();
         
         /* 打印语法树 */
         if (root != NULL) {
             fprintf(output_file, "\n========== Abstract Syntax Tree (AST) ==========\n");
             fprintf(output_file, "PROGRAM\n");
-            /* 递归打印 AST 到文件 */
+            /* 递归打印 AST ->文件 */
             printASTToFile(root, 0, output_file);
             fprintf(output_file, "================================================\n\n");
             
@@ -115,18 +114,18 @@ int main(int argc, char *argv[]) {
             printf("================================================\n\n");
         }
         
-        /* 打印符号表 */
+        /* 打印符号表（3） */
         printSymbolTableToFile(symTable, output_file);
         printSymbolTable(symTable);
         
-        /* 生成中间代码 */
+        /* 生成中间代码（4） */
         printf("Generating intermediate code...\n");
         fprintf(output_file, "Generating intermediate code...\n");
         generateIntermediateCode(root, codeGen, symTable);
         printIntermediateCodeToFile(codeGen, output_file);
         printIntermediateCode(codeGen);
         
-        /* 生成汇编代码 */
+        /* 生成汇编代码（5）*/
         printf("Generating assembly code...\n");
         fprintf(output_file, "Generating assembly code...\n");
         generateAssemblyCode(codeGen, symTable);
@@ -140,7 +139,7 @@ int main(int argc, char *argv[]) {
         fprintf(output_file, "Compilation failed!\n");
     }
     
-    /* 清理 */
+    /* clean */
     if (root != NULL) {
         freeAST(root);
     }
