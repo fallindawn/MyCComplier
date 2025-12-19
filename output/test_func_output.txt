@@ -15,116 +15,102 @@ No.   Token Type           Lexeme               Line
 2     IDENTIFIER           add                  3         
 3     LPAREN               (                    3         
 4     KEYWORD_INT          int                  3         
-5     IDENTIFIER           a                    3         
+5     IDENTIFIER           p                    3         
 6     COMMA                ,                    3         
 7     KEYWORD_INT          int                  3         
-8     IDENTIFIER           b                    3         
+8     IDENTIFIER           q                    3         
 9     RPAREN               )                    3         
 10    LBRACE               {                    3         
 11    KEYWORD_INT          int                  4         
-12    IDENTIFIER           result               4         
+12    IDENTIFIER           res                  4         
 13    SEMI                 ;                    4         
-14    IDENTIFIER           result               5         
+14    IDENTIFIER           res                  5         
 15    OP_ASSIGN            =                    5         
-16    IDENTIFIER           a                    5         
+16    IDENTIFIER           p                    5         
 17    OP_PLUS              +                    5         
-18    IDENTIFIER           b                    5         
+18    IDENTIFIER           q                    5         
 19    SEMI                 ;                    5         
 20    KEYWORD_RETURN       return               6         
-21    IDENTIFIER           result               6         
+21    IDENTIFIER           res                  6         
 22    SEMI                 ;                    6         
 23    RBRACE               }                    7         
 24    KEYWORD_INT          int                  9         
 25    IDENTIFIER           subtract             9         
 26    LPAREN               (                    9         
 27    KEYWORD_INT          int                  9         
-28    IDENTIFIER           x                    9         
+28    IDENTIFIER           u                    9         
 29    COMMA                ,                    9         
 30    KEYWORD_INT          int                  9         
-31    IDENTIFIER           y                    9         
+31    IDENTIFIER           v                    9         
 32    RPAREN               )                    9         
 33    LBRACE               {                    9         
 34    KEYWORD_RETURN       return               10        
-35    IDENTIFIER           x                    10        
+35    IDENTIFIER           u                    10        
 36    OP_MINUS             -                    10        
-37    IDENTIFIER           y                    10        
+37    IDENTIFIER           v                    10        
 38    SEMI                 ;                    10        
 39    RBRACE               }                    11        
-40    KEYWORD_FLOAT        float                13        
-41    IDENTIFIER           divide               13        
+40    KEYWORD_INT          int                  13        
+41    IDENTIFIER           main                 13        
 42    LPAREN               (                    13        
-43    KEYWORD_FLOAT        float                13        
-44    IDENTIFIER           p                    13        
-45    COMMA                ,                    13        
-46    KEYWORD_FLOAT        float                13        
-47    IDENTIFIER           q                    13        
-48    RPAREN               )                    13        
-49    LBRACE               {                    13        
-50    KEYWORD_RETURN       return               14        
-51    IDENTIFIER           p                    14        
-52    OP_DIV               /                    14        
-53    IDENTIFIER           q                    14        
-54    SEMI                 ;                    14        
-55    RBRACE               }                    15        
-56    KEYWORD_INT          int                  17        
-57    IDENTIFIER           a                    17        
-58    SEMI                 ;                    17        
-59    KEYWORD_INT          int                  18        
-60    IDENTIFIER           b                    18        
-61    SEMI                 ;                    18        
-62    KEYWORD_INT          int                  19        
-63    IDENTIFIER           c                    19        
-64    SEMI                 ;                    19        
-65    KEYWORD_INT          int                  20        
-66    IDENTIFIER           sum                  20        
-67    SEMI                 ;                    20        
-68    KEYWORD_INT          int                  21        
-69    IDENTIFIER           diff                 21        
-70    SEMI                 ;                    21        
-71    IDENTIFIER           a                    23        
-72    OP_ASSIGN            =                    23        
-73    NUMBER               10                   23        
-74    SEMI                 ;                    23        
-75    IDENTIFIER           b                    24        
-76    OP_ASSIGN            =                    24        
-77    NUMBER               5                    24        
-78    SEMI                 ;                    24        
-79    IDENTIFIER           c                    25        
-80    OP_ASSIGN            =                    25        
-81    NUMBER               0                    25        
-82    SEMI                 ;                    25        
-83    IDENTIFIER           sum                  27        
-84    OP_ASSIGN            =                    27        
-85    IDENTIFIER           add                  27        
-86    LPAREN               (                    27        
-87    IDENTIFIER           a                    27        
-88    COMMA                ,                    27        
-89    IDENTIFIER           b                    27        
-90    RPAREN               )                    27        
-91    SEMI                 ;                    27        
-92    IDENTIFIER           diff                 28        
-93    OP_ASSIGN            =                    28        
-94    IDENTIFIER           subtract             28        
-95    LPAREN               (                    28        
-96    IDENTIFIER           a                    28        
-97    COMMA                ,                    28        
-98    IDENTIFIER           b                    28        
-99    RPAREN               )                    28        
-100   SEMI                 ;                    28        
-101   KEYWORD_PRINTF       printf               30        
-102   LPAREN               (                    30        
-103   STRING               "%d\n"               30        
-104   COMMA                ,                    30        
-105   IDENTIFIER           sum                  30        
-106   RPAREN               )                    30        
-107   SEMI                 ;                    30        
-108   KEYWORD_PRINTF       printf               31        
-109   LPAREN               (                    31        
-110   STRING               "%d\n"               31        
-111   COMMA                ,                    31        
-112   IDENTIFIER           diff                 31        
-113   RPAREN               )                    31        
-114   SEMI                 ;                    31        
+43    RPAREN               )                    13        
+44    LBRACE               {                    13        
+45    KEYWORD_INT          int                  14        
+46    IDENTIFIER           a                    14        
+47    SEMI                 ;                    14        
+48    KEYWORD_INT          int                  15        
+49    IDENTIFIER           b                    15        
+50    SEMI                 ;                    15        
+51    KEYWORD_INT          int                  16        
+52    IDENTIFIER           sum                  16        
+53    SEMI                 ;                    16        
+54    KEYWORD_INT          int                  17        
+55    IDENTIFIER           diff                 17        
+56    SEMI                 ;                    17        
+57    IDENTIFIER           a                    19        
+58    OP_ASSIGN            =                    19        
+59    NUMBER               100                  19        
+60    SEMI                 ;                    19        
+61    IDENTIFIER           b                    20        
+62    OP_ASSIGN            =                    20        
+63    NUMBER               50                   20        
+64    SEMI                 ;                    20        
+65    IDENTIFIER           sum                  22        
+66    OP_ASSIGN            =                    22        
+67    IDENTIFIER           add                  22        
+68    LPAREN               (                    22        
+69    IDENTIFIER           a                    22        
+70    COMMA                ,                    22        
+71    IDENTIFIER           b                    22        
+72    RPAREN               )                    22        
+73    SEMI                 ;                    22        
+74    IDENTIFIER           diff                 23        
+75    OP_ASSIGN            =                    23        
+76    IDENTIFIER           subtract             23        
+77    LPAREN               (                    23        
+78    IDENTIFIER           a                    23        
+79    COMMA                ,                    23        
+80    IDENTIFIER           b                    23        
+81    RPAREN               )                    23        
+82    SEMI                 ;                    23        
+83    KEYWORD_PRINTF       printf               25        
+84    LPAREN               (                    25        
+85    STRING               "%d\n"               25        
+86    COMMA                ,                    25        
+87    IDENTIFIER           sum                  25        
+88    RPAREN               )                    25        
+89    SEMI                 ;                    25        
+90    KEYWORD_PRINTF       printf               26        
+91    LPAREN               (                    26        
+92    STRING               "%d\n"               26        
+93    COMMA                ,                    26        
+94    IDENTIFIER           diff                 26        
+95    RPAREN               )                    26        
+96    SEMI                 ;                    26        
+97    KEYWORD_RETURN       return               28        
+98    NUMBER               0                    28        
+99    SEMI                 ;                    28        
+100   RBRACE               }                    29        
 ==============================================
 
 
@@ -136,101 +122,86 @@ PROGRAM
       ID(add)
       PARAM_LIST
         DECL
-          ID(a)
-        DECL
-          ID(b)
-      STMT_LIST
-        DECL
-          ID(result)
-        ASSIGN
-          ID(result)
-          BINOP(+)
-            ID(a)
-            ID(b)
-        RETURN
-          ID(result)
-    FUNC_DEF [function]
-      ID(subtract)
-      PARAM_LIST
-        DECL
-          ID(x)
-        DECL
-          ID(y)
-      STMT_LIST
-        RETURN
-          BINOP(-)
-            ID(x)
-            ID(y)
-    FUNC_DEF [function]
-      ID(divide)
-      PARAM_LIST
-        DECL
           ID(p)
         DECL
           ID(q)
       STMT_LIST
-        RETURN
-          BINOP(/)
+        DECL
+          ID(res)
+        ASSIGN
+          ID(res)
+          BINOP(+)
             ID(p)
             ID(q)
-  DECL_LIST
-    DECL
-      ID(a)
-    DECL
-      ID(b)
-    DECL
-      ID(c)
-    DECL
-      ID(sum)
-    DECL
-      ID(diff)
-  STMT_LIST
-    ASSIGN
-      ID(a)
-      NUM(10)
-    ASSIGN
-      ID(b)
-      NUM(5)
-    ASSIGN
-      ID(c)
-      NUM(0)
-    ASSIGN
-      ID(sum)
-      CALL [call]
-        ID(add)
-        ARG_LIST
+        RETURN
+          ID(res)
+    FUNC_DEF [function]
+      ID(subtract)
+      PARAM_LIST
+        DECL
+          ID(u)
+        DECL
+          ID(v)
+      STMT_LIST
+        RETURN
+          BINOP(-)
+            ID(u)
+            ID(v)
+    FUNC_DEF [function]
+      ID(main)
+      STMT_LIST
+        DECL
           ID(a)
+        DECL
           ID(b)
-    ASSIGN
-      ID(diff)
-      CALL [call]
-        ID(subtract)
-        ARG_LIST
+        DECL
+          ID(sum)
+        DECL
+          ID(diff)
+        ASSIGN
           ID(a)
+          NUM(100)
+        ASSIGN
           ID(b)
-    WRITE
-      ID(sum)
-    WRITE
-      ID(diff)
+          NUM(50)
+        ASSIGN
+          ID(sum)
+          CALL [call]
+            ID(add)
+            ARG_LIST
+              ID(a)
+              ID(b)
+        ASSIGN
+          ID(diff)
+          CALL [call]
+            ID(subtract)
+            ARG_LIST
+              ID(a)
+              ID(b)
+        WRITE
+          ID(sum)
+        WRITE
+          ID(diff)
+        RETURN
+          NUM(0)
 ================================================
 
 
 ========== Symbol Table ==========
 Name                           Kind                 Type                 Line      
 -----------------------------------------------------------
-a                              variable             int                  3         
-b                              variable             int                  3         
-result                         variable             int                  4         
+p                              variable             int                  3         
+q                              variable             int                  3         
+res                            variable             int                  4         
 add                            function             int                  7         
-x                              variable             int                  9         
-y                              variable             int                  9         
+u                              variable             int                  9         
+v                              variable             int                  9         
 subtract                       function             int                  11        
-p                              variable             float                13        
-q                              variable             float                13        
-divide                         function             float                15        
-c                              variable             int                  19        
-sum                            variable             int                  20        
-diff                           variable             int                  21        
+a                              variable             int                  14        
+b                              variable             int                  15        
+sum                            variable             int                  16        
+diff                           variable             int                  17        
+main                           function             int                  29        
 ===================================
 
 Generating intermediate code...
@@ -238,44 +209,53 @@ Generating intermediate code...
 ========== Intermediate Code (Quadruples) ==========
 Num   Op              Arg1                 Arg2                 Result              
 -----------------------------------------------------
-0     DECL            a                                                             
-1     DECL            b                                                             
-2     DECL            result                                                        
-3     =               a                                         t2                  
-4     =               b                                         t2                  
-5     +               t2                   t2                   t2                  
-6     =               t2                                        result              
-7     DECL            x                                                             
-8     DECL            y                                                             
-9     DECL            p                                                             
-10    DECL            q                                                             
-11    DECL            a                                                             
-12    DECL            b                                                             
-13    DECL            c                                                             
-14    DECL            sum                                                           
-15    DECL            diff                                                          
-16    =               10                                        t3                  
-17    =               t3                                        a                   
-18    =               5                                         t4                  
-19    =               t4                                        b                   
-20    =               0                                         t5                  
-21    =               t5                                        c                   
-22    =               a                                         t7                  
-23    PARAM           t7                                                            
-24    =               b                                         t8                  
-25    PARAM           t8                                                            
-26    CALL add                                                  t8                  
-27    =               t8                                        sum                 
+0     LABEL add                                                                     
+1     DECL            p                                                             
+2     DECL            q                                                             
+3     DECL            res                                                           
+4     =               p                                         t2                  
+5     =               q                                         t2                  
+6     +               t2                   t2                   t2                  
+7     =               t2                                        res                 
+8     =               res                                       t3                  
+9     RET             t3                                                            
+10    RET                                                                           
+11    LABEL subtract                                                                
+12    DECL            u                                                             
+13    DECL            v                                                             
+14    =               u                                         t6                  
+15    =               v                                         t6                  
+16    -               t6                   t6                   t6                  
+17    RET             t6                                                            
+18    RET                                                                           
+19    LABEL main                                                                    
+20    DECL            a                                                             
+21    DECL            b                                                             
+22    DECL            sum                                                           
+23    DECL            diff                                                          
+24    =               100                                       t7                  
+25    =               t7                                        a                   
+26    =               50                                        t8                  
+27    =               t8                                        b                   
 28    =               a                                         t10                 
 29    PARAM           t10                                                           
 30    =               b                                         t11                 
 31    PARAM           t11                                                           
-32    CALL subtract                                             t11                 
-33    =               t11                                       diff                
-34    =               sum                                       t12                 
-35    WRITE           t12                                                           
-36    =               diff                                      t13                 
-37    WRITE           t13                                                           
+32    CALL add                                                  t11                 
+33    =               t11                                       sum                 
+34    =               a                                         t13                 
+35    PARAM           t13                                                           
+36    =               b                                         t14                 
+37    PARAM           t14                                                           
+38    CALL subtract                                             t14                 
+39    =               t14                                       diff                
+40    =               sum                                       t15                 
+41    WRITE           t15                                                           
+42    =               diff                                      t16                 
+43    WRITE           t16                                                           
+44    =               0                                         t17                 
+45    RET             t17                                                           
+46    RET                                                                           
 ====================================================
 
 Generating assembly code...
@@ -289,67 +269,64 @@ Generating assembly code...
 .model flat, stdcall
 
 .data
-    a dd 0
-    b dd 0
-    result dd 0
-    x dd 0
-    y dd 0
     p dd 0
     q dd 0
-    c dd 0
+    res dd 0
+    u dd 0
+    v dd 0
+    a dd 0
+    b dd 0
     sum dd 0
     diff dd 0
 
 .code
 
-    ;;; DECL a
-    ;;; DECL b
-    ;;; DECL result
-    mov eax, a
+add:
+    ;;; DECL p
+    ;;; DECL q
+    ;;; DECL res
+    mov eax, p
     mov [t2], eax
-    mov eax, b
+    mov eax, q
     mov [t2], eax
     mov eax, [t2]
     mov ebx, [t2]
     add eax, ebx
     mov [t2], eax
     mov eax, t2
-    mov [result], eax
-    ;;; DECL x
-    ;;; DECL y
-    ;;; DECL p
-    ;;; DECL q
+    mov [res], eax
+    mov eax, res
+    mov [t3], eax
+    mov eax, [t3]
+    ret
+    ret
+subtract:
+    ;;; DECL u
+    ;;; DECL v
+    mov eax, u
+    mov [t6], eax
+    mov eax, v
+    mov [t6], eax
+    mov eax, [t6]
+    mov ebx, [t6]
+    sub eax, ebx
+    mov [t6], eax
+    mov eax, [t6]
+    ret
+    ret
+main:
     ;;; DECL a
     ;;; DECL b
-    ;;; DECL c
     ;;; DECL sum
     ;;; DECL diff
-    mov eax, 10
-    mov [t3], eax
-    mov eax, t3
-    mov [a], eax
-    mov eax, 5
-    mov [t4], eax
-    mov eax, t4
-    mov [b], eax
-    mov eax, 0
-    mov [t5], eax
-    mov eax, t5
-    mov [c], eax
-    mov eax, a
+    mov eax, [100]
     mov [t7], eax
-    mov eax, [t7]
-    push eax
-    ;;; Push parameter: t7
-    mov eax, b
-    mov [t8], eax
-    mov eax, [t8]
-    push eax
-    ;;; Push parameter: t8
-    call add
+    mov eax, t7
+    mov [a], eax
+    mov eax, 50
     mov [t8], eax
     mov eax, t8
-    mov [sum], eax
+    mov [b], eax
     mov eax, a
     mov [t10], eax
     mov eax, [t10]
@@ -360,20 +337,39 @@ Generating assembly code...
     mov eax, [t11]
     push eax
     ;;; Push parameter: t11
-    call subtract
+    call add
     mov [t11], eax
     mov eax, t11
+    mov [sum], eax
+    mov eax, a
+    mov [t13], eax
+    mov eax, [t13]
+    push eax
+    ;;; Push parameter: t13
+    mov eax, b
+    mov [t14], eax
+    mov eax, [t14]
+    push eax
+    ;;; Push parameter: t14
+    call subtract
+    mov [t14], eax
+    mov eax, t14
     mov [diff], eax
     mov eax, sum
-    mov [t12], eax
-    ;;; WRITE [t12]
-    mov eax, [t12]
+    mov [t15], eax
+    ;;; WRITE [t15]
+    mov eax, [t15]
     ;;; 需要调用输出函数（如 printf）
     mov eax, diff
-    mov [t13], eax
-    ;;; WRITE [t13]
-    mov eax, [t13]
+    mov [t16], eax
+    ;;; WRITE [t16]
+    mov eax, [t16]
     ;;; 需要调用输出函数（如 printf）
+    mov eax, 0
+    mov [t17], eax
+    mov eax, [t17]
+    ret
+    ret
 
     ;;; 程序结束
     mov eax, 0

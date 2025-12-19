@@ -1,11 +1,14 @@
-/* Test Case 5: For Loop */
-int i;
-int sum;
+/* 验证for的测试 */
+int main(){
+    int i;
+    int sum;
 
-sum = 0;
+    sum = 0;
 
-for (i = 1; i <= 10; i = i + 1) {
-    sum = sum + i;
+    for (i = 1; i <= 10; i = i + 1) {
+        sum = sum + i;
+    }
+
+    printf("%d\n", sum);
+    return 0;
 }
-
-printf("%d\n", sum);

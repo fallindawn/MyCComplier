@@ -20,8 +20,11 @@
 
 本项目参考了以下开源资源和教科书内容：
 - 《龙书》(Compilers: Principles, Techniques, and Tools) - Alfred V. Aho et al.
-- Lex/Yacc 标准文档 - https://en.wikipedia.org/wiki/Lex_(software)
-- 编译器设计相关教学资料
+- flex https://blog.csdn.net/wp1603710463/article/details/50365495
+- bison https://blog.csdn.net/wp1603710463/article/details/50365640
+- flex和bison联合编译 https://blog.csdn.net/weixin_44007632/article/details/108666375
+- Makefile https://www.cnblogs.com/rednodel/p/4500388.html
+- 代码参考 https://github.com/hopexn/SimpleClangCompiler
 
 本项目与参考代码的主要区别：
 - 完全自主实现了符号表管理系统

@@ -12,65 +12,74 @@ Syntax analysis completed successfully!
 No.   Token Type           Lexeme               Line      
 ----------------------------------------------
 1     KEYWORD_INT          int                  2         
-2     IDENTIFIER           x                    2         
-3     SEMI                 ;                    2         
-4     KEYWORD_INT          int                  3         
-5     IDENTIFIER           y                    3         
-6     SEMI                 ;                    3         
-7     KEYWORD_INT          int                  4         
-8     IDENTIFIER           z                    4         
-9     SEMI                 ;                    4         
-10    IDENTIFIER           x                    6         
-11    OP_ASSIGN            =                    6         
-12    NUMBER               15                   6         
-13    SEMI                 ;                    6         
-14    IDENTIFIER           y                    7         
-15    OP_ASSIGN            =                    7         
-16    NUMBER               4                    7         
-17    SEMI                 ;                    7         
-18    IDENTIFIER           z                    10        
-19    OP_ASSIGN            =                    10        
-20    IDENTIFIER           x                    10        
-21    OP_PLUS              +                    10        
-22    IDENTIFIER           y                    10        
-23    SEMI                 ;                    10        
-24    IDENTIFIER           z                    13        
-25    OP_ASSIGN            =                    13        
-26    IDENTIFIER           x                    13        
-27    OP_MINUS             -                    13        
-28    IDENTIFIER           y                    13        
-29    SEMI                 ;                    13        
-30    IDENTIFIER           z                    16        
-31    OP_ASSIGN            =                    16        
-32    IDENTIFIER           x                    16        
-33    OP_MULT              *                    16        
-34    IDENTIFIER           y                    16        
-35    SEMI                 ;                    16        
-36    IDENTIFIER           z                    19        
-37    OP_ASSIGN            =                    19        
-38    IDENTIFIER           x                    19        
-39    OP_DIV               /                    19        
-40    IDENTIFIER           y                    19        
-41    SEMI                 ;                    19        
-42    IDENTIFIER           z                    22        
-43    OP_ASSIGN            =                    22        
-44    IDENTIFIER           x                    22        
-45    OP_MOD               %                    22        
-46    IDENTIFIER           y                    22        
-47    SEMI                 ;                    22        
-48    IDENTIFIER           z                    25        
-49    OP_ASSIGN            =                    25        
-50    NUMBER               2                    25        
-51    OP_POW               ^                    25        
-52    NUMBER               8                    25        
-53    SEMI                 ;                    25        
-54    KEYWORD_PRINTF       printf               27        
-55    LPAREN               (                    27        
-56    STRING               "%d\n"               27        
-57    COMMA                ,                    27        
-58    IDENTIFIER           z                    27        
-59    RPAREN               )                    27        
-60    SEMI                 ;                    27        
+2     IDENTIFIER           main                 2         
+3     LPAREN               (                    2         
+4     RPAREN               )                    2         
+5     LBRACE               {                    2         
+6     KEYWORD_INT          int                  3         
+7     IDENTIFIER           x                    3         
+8     SEMI                 ;                    3         
+9     KEYWORD_INT          int                  4         
+10    IDENTIFIER           y                    4         
+11    SEMI                 ;                    4         
+12    KEYWORD_INT          int                  5         
+13    IDENTIFIER           z                    5         
+14    SEMI                 ;                    5         
+15    IDENTIFIER           x                    7         
+16    OP_ASSIGN            =                    7         
+17    NUMBER               15                   7         
+18    SEMI                 ;                    7         
+19    IDENTIFIER           y                    8         
+20    OP_ASSIGN            =                    8         
+21    NUMBER               4                    8         
+22    SEMI                 ;                    8         
+23    IDENTIFIER           z                    10        
+24    OP_ASSIGN            =                    10        
+25    IDENTIFIER           x                    10        
+26    OP_PLUS              +                    10        
+27    IDENTIFIER           y                    10        
+28    SEMI                 ;                    10        
+29    IDENTIFIER           z                    12        
+30    OP_ASSIGN            =                    12        
+31    IDENTIFIER           x                    12        
+32    OP_MINUS             -                    12        
+33    IDENTIFIER           y                    12        
+34    SEMI                 ;                    12        
+35    IDENTIFIER           z                    14        
+36    OP_ASSIGN            =                    14        
+37    IDENTIFIER           x                    14        
+38    OP_MULT              *                    14        
+39    IDENTIFIER           y                    14        
+40    SEMI                 ;                    14        
+41    IDENTIFIER           z                    16        
+42    OP_ASSIGN            =                    16        
+43    IDENTIFIER           x                    16        
+44    OP_DIV               /                    16        
+45    IDENTIFIER           y                    16        
+46    SEMI                 ;                    16        
+47    IDENTIFIER           z                    18        
+48    OP_ASSIGN            =                    18        
+49    IDENTIFIER           x                    18        
+50    OP_MOD               %                    18        
+51    IDENTIFIER           y                    18        
+52    SEMI                 ;                    18        
+53    IDENTIFIER           z                    20        
+54    OP_ASSIGN            =                    20        
+55    NUMBER               2                    20        
+56    OP_POW               ^                    20        
+57    NUMBER               8                    20        
+58    SEMI                 ;                    20        
+59    KEYWORD_PRINTF       printf               22        
+60    LPAREN               (                    22        
+61    STRING               "%d\n"               22        
+62    COMMA                ,                    22        
+63    IDENTIFIER           z                    22        
+64    RPAREN               )                    22        
+65    SEMI                 ;                    22        
+66    KEYWORD_RETURN       return               23        
+67    NUMBER               0                    23        
+68    SEMI                 ;                    23        
+69    RBRACE               }                    24        
 ==============================================
 
 
@@ -78,60 +87,65 @@ No.   Token Type           Lexeme               Line
 PROGRAM
 PROGRAM
   DECL_LIST
-    DECL
-      ID(x)
-    DECL
-      ID(y)
-    DECL
-      ID(z)
-  STMT_LIST
-    ASSIGN
-      ID(x)
-      NUM(15)
-    ASSIGN
-      ID(y)
-      NUM(4)
-    ASSIGN
-      ID(z)
-      BINOP(+)
-        ID(x)
-        ID(y)
-    ASSIGN
-      ID(z)
-      BINOP(-)
-        ID(x)
-        ID(y)
-    ASSIGN
-      ID(z)
-      BINOP(*)
-        ID(x)
-        ID(y)
-    ASSIGN
-      ID(z)
-      BINOP(/)
-        ID(x)
-        ID(y)
-    ASSIGN
-      ID(z)
-      BINOP(%)
-        ID(x)
-        ID(y)
-    ASSIGN
-      ID(z)
-      BINOP(^)
-        NUM(2)
-        NUM(8)
-    WRITE
-      ID(z)
+    FUNC_DEF [function]
+      ID(main)
+      STMT_LIST
+        DECL
+          ID(x)
+        DECL
+          ID(y)
+        DECL
+          ID(z)
+        ASSIGN
+          ID(x)
+          NUM(15)
+        ASSIGN
+          ID(y)
+          NUM(4)
+        ASSIGN
+          ID(z)
+          BINOP(+)
+            ID(x)
+            ID(y)
+        ASSIGN
+          ID(z)
+          BINOP(-)
+            ID(x)
+            ID(y)
+        ASSIGN
+          ID(z)
+          BINOP(*)
+            ID(x)
+            ID(y)
+        ASSIGN
+          ID(z)
+          BINOP(/)
+            ID(x)
+            ID(y)
+        ASSIGN
+          ID(z)
+          BINOP(%)
+            ID(x)
+            ID(y)
+        ASSIGN
+          ID(z)
+          BINOP(^)
+            NUM(2)
+            NUM(8)
+        WRITE
+          ID(z)
+        RETURN
+          NUM(0)
 ================================================
 
 
 ========== Symbol Table ==========
 Name                           Kind                 Type                 Line      
 -----------------------------------------------------------
-x                              variable             int                  2         
-y                              variable             int                  3         
-z                              variable             int                  4         
+x                              variable             int                  3         
+y                              variable             int                  4         
+z                              variable             int                  5         
+main                           function             int                  24        
 ===================================
 
 Generating intermediate code...
@@ -139,39 +153,43 @@ Generating intermediate code...
 ========== Intermediate Code (Quadruples) ==========
 Num   Op              Arg1                 Arg2                 Result              
 -----------------------------------------------------
-0     DECL            x                                                             
-1     DECL            y                                                             
-2     DECL            z                                                             
-3     =               15                                        t0                  
-4     =               t0                                        x                   
-5     =               4                                         t1                  
-6     =               t1                                        y                   
-7     =               x                                         t4                  
-8     =               y                                         t4                  
-9     +               t4                   t4                   t4                  
-10    =               t4                                        z                   
-11    =               x                                         t7                  
-12    =               y                                         t7                  
-13    -               t7                   t7                   t7                  
-14    =               t7                                        z                   
-15    =               x                                         t10                 
-16    =               y                                         t10                 
-17    *               t10                  t10                  t10                 
-18    =               t10                                       z                   
-19    =               x                                         t13                 
-20    =               y                                         t13                 
-21    /               t13                  t13                  t13                 
-22    =               t13                                       z                   
-23    =               x                                         t16                 
-24    =               y                                         t16                 
-25    %               t16                  t16                  t16                 
-26    =               t16                                       z                   
-27    =               2                                         t19                 
-28    =               8                                         t19                 
-29    ^               t19                  t19                  t19                 
-30    =               t19                                       z                   
-31    =               z                                         t20                 
-32    WRITE           t20                                                           
+0     LABEL main                                                                    
+1     DECL            x                                                             
+2     DECL            y                                                             
+3     DECL            z                                                             
+4     =               15                                        t0                  
+5     =               t0                                        x                   
+6     =               4                                         t1                  
+7     =               t1                                        y                   
+8     =               x                                         t4                  
+9     =               y                                         t4                  
+10    +               t4                   t4                   t4                  
+11    =               t4                                        z                   
+12    =               x                                         t7                  
+13    =               y                                         t7                  
+14    -               t7                   t7                   t7                  
+15    =               t7                                        z                   
+16    =               x                                         t10                 
+17    =               y                                         t10                 
+18    *               t10                  t10                  t10                 
+19    =               t10                                       z                   
+20    =               x                                         t13                 
+21    =               y                                         t13                 
+22    /               t13                  t13                  t13                 
+23    =               t13                                       z                   
+24    =               x                                         t16                 
+25    =               y                                         t16                 
+26    %               t16                  t16                  t16                 
+27    =               t16                                       z                   
+28    =               2                                         t19                 
+29    =               8                                         t19                 
+30    ^               t19                  t19                  t19                 
+31    =               t19                                       z                   
+32    =               z                                         t20                 
+33    WRITE           t20                                                           
+34    =               0                                         t21                 
+35    RET             t21                                                           
+36    RET                                                                           
 ====================================================
 
 Generating assembly code...
@@ -191,6 +209,7 @@ Generating assembly code...
 
 .code
 
+main:
     ;;; DECL x
     ;;; DECL y
     ;;; DECL z
@@ -262,6 +281,11 @@ Generating assembly code...
     ;;; WRITE [t20]
     mov eax, [t20]
     ;;; 需要调用输出函数（如 printf）
+    mov eax, 0
+    mov [t21], eax
+    mov eax, [t21]
+    ret
+    ret
 
     ;;; 程序结束
     mov eax, 0

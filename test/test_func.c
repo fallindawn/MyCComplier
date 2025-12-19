@@ -1,34 +1,29 @@
-/* 测试函数识别和函数调用功能 */
+/* 测试函数定义和调用 - 避免变量重名 */
 
-int add(int a, int b) {
-    int result;
-    result = a + b;
-    return result;
+int add(int p, int q) {
+    int res;
+    res = p + q;
+    return res;
 }
 
-int subtract(int x, int y) {
-    return x - y;
+int subtract(int u, int v) {
+    return u - v;
 }
 
-float divide(float p, float q) {
-    return p / q;
+int main() {
+    int a;
+    int b;
+    int sum;
+    int diff;
+    
+    a = 100;
+    b = 50;
+    
+    sum = add(a, b);
+    diff = subtract(a, b);
+    
+    printf("%d\n", sum);
+    printf("%d\n", diff);
+    
+    return 0;
 }
-
-int a;
-int b;
-int c;
-int sum;
-int diff;
-
-a = 10;
-b = 5;
-c = 0;
-
-sum = add(a, b);
-diff = subtract(a, b);
-
-printf("%d\n", sum);
-printf("%d\n", diff);
-
-
-

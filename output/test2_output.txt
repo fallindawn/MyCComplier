@@ -12,54 +12,63 @@ Syntax analysis completed successfully!
 No.   Token Type           Lexeme               Line      
 ----------------------------------------------
 1     KEYWORD_INT          int                  2         
-2     IDENTIFIER           a                    2         
-3     SEMI                 ;                    2         
-4     KEYWORD_INT          int                  3         
-5     IDENTIFIER           i                    3         
-6     SEMI                 ;                    3         
-7     IDENTIFIER           a                    5         
-8     OP_ASSIGN            =                    5         
-9     NUMBER               0                    5         
-10    SEMI                 ;                    5         
-11    IDENTIFIER           i                    6         
-12    OP_ASSIGN            =                    6         
-13    NUMBER               0                    6         
-14    SEMI                 ;                    6         
-15    KEYWORD_WHILE        while                8         
-16    LPAREN               (                    8         
-17    IDENTIFIER           i                    8         
-18    OP_LT                <                    8         
-19    NUMBER               10                   8         
-20    RPAREN               )                    8         
-21    LBRACE               {                    8         
-22    IDENTIFIER           a                    9         
-23    OP_ASSIGN            =                    9         
-24    IDENTIFIER           a                    9         
-25    OP_PLUS              +                    9         
-26    IDENTIFIER           i                    9         
-27    SEMI                 ;                    9         
-28    IDENTIFIER           i                    10        
-29    OP_ASSIGN            =                    10        
-30    IDENTIFIER           i                    10        
-31    OP_PLUS              +                    10        
-32    NUMBER               1                    10        
-33    SEMI                 ;                    10        
-34    RBRACE               }                    11        
-35    KEYWORD_IF           if                   13        
-36    LPAREN               (                    13        
-37    IDENTIFIER           a                    13        
-38    OP_GT                >                    13        
-39    NUMBER               30                   13        
-40    RPAREN               )                    13        
-41    LBRACE               {                    13        
-42    KEYWORD_PRINTF       printf               14        
-43    LPAREN               (                    14        
-44    STRING               "%d\n"               14        
-45    COMMA                ,                    14        
-46    IDENTIFIER           a                    14        
-47    RPAREN               )                    14        
-48    SEMI                 ;                    14        
-49    RBRACE               }                    15        
+2     IDENTIFIER           main                 2         
+3     LPAREN               (                    2         
+4     RPAREN               )                    2         
+5     LBRACE               {                    2         
+6     KEYWORD_INT          int                  3         
+7     IDENTIFIER           a                    3         
+8     SEMI                 ;                    3         
+9     KEYWORD_INT          int                  4         
+10    IDENTIFIER           i                    4         
+11    SEMI                 ;                    4         
+12    IDENTIFIER           a                    6         
+13    OP_ASSIGN            =                    6         
+14    NUMBER               0                    6         
+15    SEMI                 ;                    6         
+16    IDENTIFIER           i                    7         
+17    OP_ASSIGN            =                    7         
+18    NUMBER               0                    7         
+19    SEMI                 ;                    7         
+20    KEYWORD_WHILE        while                9         
+21    LPAREN               (                    9         
+22    IDENTIFIER           i                    9         
+23    OP_LT                <                    9         
+24    NUMBER               10                   9         
+25    RPAREN               )                    9         
+26    LBRACE               {                    9         
+27    IDENTIFIER           a                    10        
+28    OP_ASSIGN            =                    10        
+29    IDENTIFIER           a                    10        
+30    OP_PLUS              +                    10        
+31    IDENTIFIER           i                    10        
+32    SEMI                 ;                    10        
+33    IDENTIFIER           i                    11        
+34    OP_ASSIGN            =                    11        
+35    IDENTIFIER           i                    11        
+36    OP_PLUS              +                    11        
+37    NUMBER               1                    11        
+38    SEMI                 ;                    11        
+39    RBRACE               }                    12        
+40    KEYWORD_IF           if                   14        
+41    LPAREN               (                    14        
+42    IDENTIFIER           a                    14        
+43    OP_GT                >                    14        
+44    NUMBER               30                   14        
+45    RPAREN               )                    14        
+46    LBRACE               {                    14        
+47    KEYWORD_PRINTF       printf               15        
+48    LPAREN               (                    15        
+49    STRING               "%d\n"               15        
+50    COMMA                ,                    15        
+51    IDENTIFIER           a                    15        
+52    RPAREN               )                    15        
+53    SEMI                 ;                    15        
+54    RBRACE               }                    16        
+55    KEYWORD_RETURN       return               17        
+56    NUMBER               0                    17        
+57    SEMI                 ;                    17        
+58    RBRACE               }                    18        
 ==============================================
 
 
@@ -67,47 +76,52 @@ No.   Token Type           Lexeme               Line
 PROGRAM
 PROGRAM
   DECL_LIST
-    DECL
-      ID(a)
-    DECL
-      ID(i)
-  STMT_LIST
-    ASSIGN
-      ID(a)
-      NUM(0)
-    ASSIGN
-      ID(i)
-      NUM(0)
-    WHILE
-      BINOP(<)
-        ID(i)
-        NUM(10)
+    FUNC_DEF [function]
+      ID(main)
       STMT_LIST
+        DECL
+          ID(a)
+        DECL
+          ID(i)
         ASSIGN
           ID(a)
-          BINOP(+)
-            ID(a)
-            ID(i)
+          NUM(0)
         ASSIGN
           ID(i)
-          BINOP(+)
+          NUM(0)
+        WHILE
+          BINOP(<)
             ID(i)
-            NUM(1)
-    IF
-      BINOP(>)
-        ID(a)
-        NUM(30)
-      STMT_LIST
-        WRITE
-          ID(a)
+            NUM(10)
+          STMT_LIST
+            ASSIGN
+              ID(a)
+              BINOP(+)
+                ID(a)
+                ID(i)
+            ASSIGN
+              ID(i)
+              BINOP(+)
+                ID(i)
+                NUM(1)
+        IF
+          BINOP(>)
+            ID(a)
+            NUM(30)
+          STMT_LIST
+            WRITE
+              ID(a)
+        RETURN
+          NUM(0)
 ================================================
 
 
 ========== Symbol Table ==========
 Name                           Kind                 Type                 Line      
 -----------------------------------------------------------
-a                              variable             int                  2         
-i                              variable             int                  3         
+a                              variable             int                  3         
+i                              variable             int                  4         
+main                           function             int                  18        
 ===================================
 
 Generating intermediate code...
@@ -115,22 +129,26 @@ Generating intermediate code...
 ========== Intermediate Code (Quadruples) ==========
 Num   Op              Arg1                 Arg2                 Result              
 -----------------------------------------------------
-0     DECL            a                                                             
-1     DECL            i                                                             
-2     =               0                                         t0                  
-3     =               t0                                        a                   
-4     =               0                                         t1                  
-5     =               t1                                        i                   
-6     =               a                                         t4                  
-7     =               i                                         t4                  
-8     +               t4                   t4                   t4                  
-9     =               t4                                        a                   
-10    =               i                                         t7                  
-11    =               1                                         t7                  
-12    +               t7                   t7                   t7                  
-13    =               t7                                        i                   
-14    =               a                                         t8                  
-15    WRITE           t8                                                            
+0     LABEL main                                                                    
+1     DECL            a                                                             
+2     DECL            i                                                             
+3     =               0                                         t0                  
+4     =               t0                                        a                   
+5     =               0                                         t1                  
+6     =               t1                                        i                   
+7     =               a                                         t4                  
+8     =               i                                         t4                  
+9     +               t4                   t4                   t4                  
+10    =               t4                                        a                   
+11    =               i                                         t7                  
+12    =               1                                         t7                  
+13    +               t7                   t7                   t7                  
+14    =               t7                                        i                   
+15    =               a                                         t8                  
+16    WRITE           t8                                                            
+17    =               0                                         t9                  
+18    RET             t9                                                            
+19    RET                                                                           
 ====================================================
 
 Generating assembly code...
@@ -149,6 +167,7 @@ Generating assembly code...
 
 .code
 
+main:
     ;;; DECL a
     ;;; DECL i
     mov eax, 0
@@ -184,6 +203,11 @@ Generating assembly code...
     ;;; WRITE [t8]
     mov eax, [t8]
     ;;; 需要调用输出函数（如 printf）
+    mov eax, 0
+    mov [t9], eax
+    mov eax, [t9]
+    ret
+    ret
 
     ;;; 程序结束
     mov eax, 0

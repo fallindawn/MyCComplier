@@ -1,27 +1,24 @@
-/* Test Case 3: Arithmetic Operations */
-int x;
-int y;
-int z;
+/* 验证单目运算符 */
+int main() {
+    int x;
+    int y;
+    int z;
 
-x = 15;
-y = 4;
+    x = 15;
+    y = 4;
 
-/* Addition */
-z = x + y;
+    z = x + y;
 
-/* Subtraction */
-z = x - y;
+    z = x - y;
 
-/* Multiplication */
-z = x * y;
+    z = x * y;
 
-/* Division */
-z = x / y;
+    z = x / y;
 
-/* Modulo */
-z = x % y;
+    z = x % y;
 
-/* Power */
-z = 2 ^ 8;
+    z = 2 ^ 8;
 
-printf("%d\n", z);
+    printf("%d\n", z);
+    return 0;
+}

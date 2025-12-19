@@ -1,15 +1,18 @@
-/* Test Case 2: Loop and Conditional */
-int a;
-int i;
+/* 验证循环和分支语句 */
+int main() {
+    int a;
+    int i;
 
-a = 0;
-i = 0;
+    a = 0;
+    i = 0;
 
-while (i < 10) {
-    a = a + i;
-    i = i + 1;
-}
+    while (i < 10) {
+        a = a + i;
+        i = i + 1;
+    }
 
-if (a > 30) {
-    printf("%d\n", a);
+    if (a > 30) {
+        printf("%d\n", a);
+    }
+    return 0;
 }

@@ -114,6 +114,66 @@ void generateIntermediateCode(ASTNode *ast, CodeGenerator *gen, SymbolTable *tab
             }
             break;
             
+        case NODE_FUNC_DEF: {
+            /* 函数定义：funcName, [paramList], stmtList */
+            if (ast->childrenCount >= 2) {
+                ASTNode *funcName = ast->children[0];
+                ASTNode *paramList = NULL;
+                ASTNode *stmtList = NULL;
+                
+                /* 判断是否有参数列表 */
+                if (ast->childrenCount == 3) {
+                    /* 有参数列表: children[0]=funcName, children[1]=paramList, children[2]=stmtList */
+                    paramList = ast->children[1];
+                    stmtList = ast->children[2];
+                } else {
+                    /* 无参数列表: children[0]=funcName, children[1]=stmtList */
+                    stmtList = ast->children[1];
+                }
+                
+                if (funcName->type == NODE_ID) {
+                    /* 生成函数标签 */
+                    char labelBuf[256];
+                    sprintf(labelBuf, "LABEL %s", funcName->name);
+                    genCode(gen, labelBuf, "", "", "");
+                    
+                    /* 生成参数声明 */
+                    if (paramList != NULL && paramList->type == NODE_PARAM_LIST) {
+                        for (int i = 0; i < paramList->childrenCount; i++) {
+                            ASTNode *param = paramList->children[i];
+                            if (param->type == NODE_DECL && param->childrenCount > 0) {
+                                ASTNode *paramId = param->children[0];
+                                if (paramId->type == NODE_ID) {
+                                    genCode(gen, "DECL", paramId->name, "", "");
+                                }
+                            }
+                        }
+                    }
+                    
+                    /* 生成函数体代码 */
+                    if (stmtList != NULL) {
+                        generateIntermediateCode(stmtList, gen, table);
+                    }
+                    
+                    /* 生成函数返回指令 */
+                    genCode(gen, "RET", "", "", "");
+                }
+            }
+            break;
+        }
+            
+        case NODE_RETURN_STMT: {
+            /* 返回语句 */
+            if (ast->childrenCount > 0) {
+                char *tempVar = getTempVar(gen);
+                generateIntermediateCodeExpr(ast->children[0], gen, table, tempVar);
+                genCode(gen, "RET", tempVar, "", "");
+            } else {
+                genCode(gen, "RET", "", "", "");
+            }
+            break;
+        }
+            
         default:
             for (int i = 0; i < ast->childrenCount; i++) {
                 generateIntermediateCode(ast->children[i], gen, table);
@@ -388,8 +448,26 @@ void generateAssemblyCode(CodeGenerator *gen, SymbolTable *table) {
             sscanf(q->op, "CALL %s", funcName);
             sprintf(line, "    call %s", funcName);
             addAsmLine(gen, line);
-            sprintf(line, "    mov [%s], eax", q->result);
+            if (strlen(q->result) > 0) {
+                sprintf(line, "    mov [%s], eax", q->result);
+                addAsmLine(gen, line);
+            }
+        }
+        else if (strncmp(q->op, "LABEL", 5) == 0) {
+            /* 函数标签 */
+            char funcName[128];
+            sscanf(q->op, "LABEL %s", funcName);
+            sprintf(line, "%s:", funcName);
             addAsmLine(gen, line);
+        }
+        else if (strcmp(q->op, "RET") == 0) {
+            /* 函数返回 */
+            if (strlen(q->arg1) > 0) {
+                /* 有返回值 */
+                sprintf(line, "    mov eax, [%s]", q->arg1);
+                addAsmLine(gen, line);
+            }
+            addAsmLine(gen, "    ret");
         }
         else {
             /* 其他操作符 */
