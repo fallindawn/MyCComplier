@@ -312,6 +312,302 @@ void freeCodeGenerator(CodeGenerator *gen) {
     }
 }
 
+/* ==================== 代码优化函数 ==================== */
+
+/* 检查字符串是否为常数 */
+int isConstant(const char *str) {
+    if (str == NULL || strlen(str) == 0) return 0;
+    char *endptr;
+    strtol(str, &endptr, 10);
+    return *endptr == '\0';
+}
+
+/* 计算常数表达式的值 */
+int evaluateConstant(const char *op, int val1, int val2) {
+    if (strcmp(op, "+") == 0) return val1 + val2;
+    if (strcmp(op, "-") == 0) return val1 - val2;
+    if (strcmp(op, "*") == 0) return val1 * val2;
+    if (strcmp(op, "/") == 0 && val2 != 0) return val1 / val2;
+    return 0; // 无效操作或除零
+}
+
+/* 检查四元式是否为死代码 */
+int isDeadCode(Quadruple *q, CodeGenerator *gen, int index) {
+    if (q == NULL || gen == NULL) return 0;
+
+    /* 如果是赋值给临时变量，检查后续是否使用 */
+    if (strcmp(q->op, "=") == 0 && strncmp(q->result, "t", 1) == 0) {
+        for (int i = index + 1; i < gen->count; i++) {
+            Quadruple *next = &gen->quads[i];
+            /* 检查是否在后续四元式中使用 */
+            if (strcmp(next->arg1, q->result) == 0 ||
+                strcmp(next->arg2, q->result) == 0 ||
+                strcmp(next->result, q->result) == 0) {
+                return 0; /* 被使用，不是死代码 */
+            }
+        }
+        return 1; /* 未被使用，是死代码 */
+    }
+    return 0;
+}
+
+/* 移除指定索引的四元式 */
+void removeQuadruple(CodeGenerator *gen, int index) {
+    if (gen == NULL || index < 0 || index >= gen->count) return;
+
+    /* 移动后续四元式向前 */
+    for (int i = index; i < gen->count - 1; i++) {
+        gen->quads[i] = gen->quads[i + 1];
+    }
+    gen->count--;
+}
+
+/* 主要优化函数 */
+void optimizeIntermediateCode(CodeGenerator *gen) {
+    if (gen == NULL || gen->count == 0) return;
+
+    int optimized = 1; /* 标记是否进行了优化 */
+    while (optimized) {
+        optimized = 0;
+
+        /* Pass 1: 常数折叠 */
+        for (int i = 0; i < gen->count; i++) {
+            Quadruple *q = &gen->quads[i];
+
+            /* 检查二元运算的常数折叠 */
+            if ((strcmp(q->op, "+") == 0 || strcmp(q->op, "-") == 0 ||
+                 strcmp(q->op, "*") == 0 || strcmp(q->op, "/") == 0) &&
+                isConstant(q->arg1) && isConstant(q->arg2)) {
+
+                int val1 = atoi(q->arg1);
+                int val2 = atoi(q->arg2);
+                int result = evaluateConstant(q->op, val1, val2);
+
+                /* 替换为常数赋值 */
+                sprintf(q->op, "=");
+                sprintf(q->arg1, "%d", result);
+                sprintf(q->arg2, "");
+                optimized = 1;
+            }
+
+            /* 检查代数简化 */
+            if (strcmp(q->op, "+") == 0 && strcmp(q->arg2, "0") == 0) {
+                /* x + 0 = x */
+                sprintf(q->op, "=");
+                sprintf(q->arg2, "");
+                optimized = 1;
+            }
+            else if (strcmp(q->op, "-") == 0 && strcmp(q->arg2, "0") == 0) {
+                /* x - 0 = x */
+                sprintf(q->op, "=");
+                sprintf(q->arg2, "");
+                optimized = 1;
+            }
+            else if (strcmp(q->op, "*") == 0 && strcmp(q->arg2, "1") == 0) {
+                /* x * 1 = x */
+                sprintf(q->op, "=");
+                sprintf(q->arg2, "");
+                optimized = 1;
+            }
+            else if (strcmp(q->op, "*") == 0 && strcmp(q->arg1, "1") == 0) {
+                /* 1 * x = x */
+                sprintf(q->op, "=");
+                sprintf(q->arg1, "%s", q->arg2);
+                sprintf(q->arg2, "");
+                optimized = 1;
+            }
+        }
+
+        /* Pass 2: 死代码消除 */
+        for (int i = 0; i < gen->count; i++) {
+            if (isDeadCode(&gen->quads[i], gen, i)) {
+                removeQuadruple(gen, i);
+                optimized = 1;
+                i--; /* 重新检查当前位置 */
+            }
+        }
+
+        /* Pass 3: 复制传播 */
+        for (int i = 0; i < gen->count; i++) {
+            Quadruple *q = &gen->quads[i];
+
+            /* 如果是简单的赋值 t = x */
+            if (strcmp(q->op, "=") == 0 && strlen(q->arg2) == 0 &&
+                strncmp(q->result, "t", 1) == 0) {
+
+                char *tempVar = q->result;
+                char *source = q->arg1;
+
+                /* 在后续四元式中传播 */
+                for (int j = i + 1; j < gen->count; j++) {
+                    Quadruple *next = &gen->quads[j];
+
+                    /* 替换使用这个临时变量的地方 */
+                    if (strcmp(next->arg1, tempVar) == 0) {
+                        strcpy(next->arg1, source);
+                        optimized = 1;
+                    }
+                    if (strcmp(next->arg2, tempVar) == 0) {
+                        strcpy(next->arg2, source);
+                        optimized = 1;
+                    }
+
+                    /* 如果遇到对这个临时变量的重新赋值，停止传播 */
+                    if (strcmp(next->result, tempVar) == 0) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* ==================== 汇编代码优化函数 ==================== */
+
+/* 提取汇编指令中的操作数（简化版） */
+int extractAsmOperands(const char *code, char *op, char *reg1, char *reg2) {
+    if (code == NULL || strlen(code) < 4) return 0;
+    
+    /* 跳过前导空格和注释 */
+    while (*code && (*code == ' ' || *code == '\t' || *code == ';')) code++;
+    
+    /* 提取指令 */
+    int i = 0;
+    while (i < 31 && code[i] && code[i] != ' ' && code[i] != '\t') {
+        op[i] = code[i];
+        i++;
+    }
+    op[i] = '\0';
+    
+    if (strlen(op) == 0) return 0;
+    
+    return 1;
+}
+
+/* 检查两条指令是否为冗余mov */
+int isRedundantMov(const char *prev_code, const char *curr_code) {
+    if (prev_code == NULL || curr_code == NULL) return 0;
+    
+    /* mov [a], eax; mov eax, [a] -> 冗余 */
+    /* mov eax, [a]; mov eax, [a] -> 冗余 */
+    
+    /* 简化：检查是否完全相同 */
+    const char *p = prev_code;
+    const char *c = curr_code;
+    
+    /* 跳过前导空格 */
+    while (*p && (*p == ' ' || *p == '\t')) p++;
+    while (*c && (*c == ' ' || *c == '\t')) c++;
+    
+    /* 检查是否是形如 "mov eax, [x]; mov eax, [x]" 的重复 */
+    if (strncmp(p, "mov", 3) == 0 && strncmp(c, "mov", 3) == 0) {
+        const char *rest_p = p + 3;
+        const char *rest_c = c + 3;
+        
+        while (*rest_p && (*rest_p == ' ' || *rest_p == '\t')) rest_p++;
+        while (*rest_c && (*rest_c == ' ' || *rest_c == '\t')) rest_c++;
+        
+        /* 检查操作数是否相同 */
+        return strcmp(rest_p, rest_c) == 0;
+    }
+    
+    return 0;
+}
+
+/* 检查是否为无效指令 */
+int isInvalidInstruction(const char *code) {
+    if (code == NULL || strlen(code) == 0) return 0;
+    
+    const char *p = code;
+    while (*p && (*p == ' ' || *p == '\t')) p++;
+    
+    /* 空行 */
+    if (*p == '\0') return 1;
+    
+    /* 仅注释 */
+    if (*p == ';') return 1;
+    
+    /* mov eax, eax 冗余 */
+    if (strncmp(p, "mov eax, eax", 12) == 0) return 1;
+    if (strncmp(p, "mov ebx, ebx", 12) == 0) return 1;
+    if (strncmp(p, "mov ecx, ecx", 12) == 0) return 1;
+    if (strncmp(p, "mov edx, edx", 12) == 0) return 1;
+    
+    return 0;
+}
+
+/* 汇编代码优化 */
+void optimizeAssemblyCode(CodeGenerator *gen) {
+    if (gen == NULL || gen->asmCount == 0) return;
+    
+    int optimized = 1;
+    while (optimized) {
+        optimized = 0;
+        
+        /* Pass 1: 移除无效指令 */
+        for (int i = 0; i < gen->asmCount; i++) {
+            if (isInvalidInstruction(gen->asmLines[i].code)) {
+                /* 移动后续指令向前 */
+                for (int j = i; j < gen->asmCount - 1; j++) {
+                    strcpy(gen->asmLines[j].code, gen->asmLines[j + 1].code);
+                }
+                gen->asmCount--;
+                optimized = 1;
+                i--;
+            }
+        }
+        
+        /* Pass 2: 移除冗余mov指令 */
+        for (int i = 0; i < gen->asmCount - 1; i++) {
+            /* 检查当前指令是否是mov */
+            if (strncmp(gen->asmLines[i].code, "    mov", 7) == 0) {
+                /* 检查下一条指令是否也是mov且为冗余 */
+                if (i + 1 < gen->asmCount && 
+                    isRedundantMov(gen->asmLines[i].code, gen->asmLines[i + 1].code)) {
+                    /* 移除冗余指令 */
+                    for (int j = i + 1; j < gen->asmCount - 1; j++) {
+                        strcpy(gen->asmLines[j].code, gen->asmLines[j + 1].code);
+                    }
+                    gen->asmCount--;
+                    optimized = 1;
+                }
+            }
+        }
+        
+        /* Pass 3: 移除push-pop对 (当操作相同的寄存器时) */
+        for (int i = 0; i < gen->asmCount - 1; i++) {
+            const char *curr = gen->asmLines[i].code;
+            const char *next = gen->asmLines[i + 1].code;
+            
+            /* push eax; ...; pop eax (中间没有改变eax) */
+            if (strncmp(curr, "    push eax", 12) == 0 &&
+                strncmp(next, "    pop eax", 11) == 0) {
+                
+                /* 检查中间是否有改变eax的指令 */
+                int can_remove = 1;
+                for (int j = i + 1; j <= i + 1; j++) {
+                    const char *code = gen->asmLines[j].code;
+                    if (strstr(code, "eax") && 
+                        (strstr(code, "mov eax") || strstr(code, "add eax") || 
+                         strstr(code, "sub eax") || strstr(code, "imul eax"))) {
+                        can_remove = 0;
+                        break;
+                    }
+                }
+                
+                if (can_remove && i + 1 < gen->asmCount) {
+                    /* 移除push和pop */
+                    for (int j = i; j < gen->asmCount - 2; j++) {
+                        strcpy(gen->asmLines[j].code, gen->asmLines[j + 2].code);
+                    }
+                    gen->asmCount -= 2;
+                    optimized = 1;
+                }
+            }
+        }
+    }
+}
+
 /* 辅助函数：添加汇编代码行 */
 static void addAsmLine(CodeGenerator *gen, const char *line) {
     if (gen == NULL || line == NULL) return;

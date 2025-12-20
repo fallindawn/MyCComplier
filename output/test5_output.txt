@@ -139,11 +139,9 @@ Num   Op              Arg1                 Arg2                 Result
 ====================================================
 
 Generating assembly code...
+Optimizing assembly code...
 
 ========== Assembly Code ==========
-;;; =======================================
-;;; Generated Assembly Code
-;;; =======================================
 
 .386
 .model flat, stdcall
@@ -155,8 +153,6 @@ Generating assembly code...
 .code
 
 main:
-    ;;; DECL i
-    ;;; DECL sum
     mov eax, 0
     mov [t0], eax
     mov eax, t0
@@ -187,16 +183,13 @@ main:
     mov [sum], eax
     mov eax, sum
     mov [t8], eax
-    ;;; WRITE [t8]
     mov eax, [t8]
-    ;;; 需要调用输出函数（如 printf）
     mov eax, 0
     mov [t9], eax
     mov eax, [t9]
     ret
     ret
 
-    ;;; 程序结束
     mov eax, 0
     ret
 

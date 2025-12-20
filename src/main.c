@@ -129,6 +129,12 @@ int main(int argc, char *argv[]) {
         printf("Generating assembly code...\n");
         fprintf(output_file, "Generating assembly code...\n");
         generateAssemblyCode(codeGen, symTable);
+        
+        /* 优化汇编代码 */
+        printf("Optimizing assembly code...\n");
+        fprintf(output_file, "Optimizing assembly code...\n");
+        optimizeAssemblyCode(codeGen);
+        
         printAssemblyCodeToFile(codeGen, output_file);
         printAssemblyCode(codeGen);
         

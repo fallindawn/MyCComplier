@@ -43,6 +43,7 @@ void printIntermediateCode(CodeGenerator *gen);
 void printIntermediateCodeToFile(CodeGenerator *gen, FILE *file);
 /* 汇编代码生成函数 */
 void generateAssemblyCode(CodeGenerator *gen, SymbolTable *table);
+void optimizeAssemblyCode(CodeGenerator *gen);
 void printAssemblyCode(CodeGenerator *gen);
 void printAssemblyCodeToFile(CodeGenerator *gen, FILE *file);
 void freeCodeGenerator(CodeGenerator *gen);

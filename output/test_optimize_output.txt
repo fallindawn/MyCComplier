@@ -1,0 +1,9 @@
+==================================================
+          C Language Compiler
+==================================================
+
+Input File: .\test\test_optimize.c
+
+Starting lexical and syntax analysis...
+
+Compilation failed!

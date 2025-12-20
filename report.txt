@@ -1,0 +1,179 @@
+### 一、需求理解
+你希望我完整梳理 `fallindawn/MyCComplier` 项目从“启动程序”到“生成可执行文件”的**端到端运行逻辑**，明确各核心模块（词法、语法、语义、AST、符号表、汇编生成）的执行顺序、数据流转和协作关系，让你清晰掌握整个编译器的工作流程。
+
+### 二、MyCComplier 整体运行逻辑（完整流程）
+该项目是基于 Flex/Bison 实现的简易C语言编译器，遵循经典编译器“前端（词法/语法/语义）→ 中端（AST）→ 后端（汇编生成/链接）”架构，整体运行可拆解为 **9个核心步骤**，每个步骤对应特定模块，数据在模块间有序流转。
+
+#### 整体流程总览（可视化）
+```mermaid
+flowchart LR
+    A[用户执行编译命令] --> B[main.c：初始化+参数处理]
+    B --> C[lexer.l：词法分析（字符流→Token流）]
+    C --> D[parser.y：语法分析（Token流→AST）+ 语义校验]
+    D --> E{语义校验是否通过？}
+    E -->|否| F[输出错误信息，退出]
+    E -->|是| G[codegen.c：汇编生成（AST→x86汇编代码）]
+    G --> H[调用系统命令：汇编+链接]
+    H --> I[生成可执行文件]
+    
+    %% 模块依赖标注
+    D -. 调用 .-> ast.c[ast.c/h：AST创建/管理]
+    D -. 调用 .-> symbol_table.c[symbol_table.c/h：符号表校验]
+    G -. 依赖 .-> ast.c
+    G -. 依赖 .-> symbol_table.c
+```
+
+---
+
+### 三、逐步骤拆解运行逻辑（附核心代码+数据流转）
+#### 步骤1：程序启动与初始化（main.c 总控）
+**核心文件**：`src/main.c`  
+**核心作用**：编译器入口，处理用户输入，初始化全局资源，调度后续所有流程。
+1. **用户输入处理**：
+   - 用户执行命令：`./mycc test.c`（`mycc` 是编译器可执行文件，`test.c` 是待编译的C源文件）；
+   - `main.c` 接收命令行参数，检查 `test.c` 是否存在，若不存在直接输出 `Cannot open file 'test.c'` 并退出。
+2. **全局资源初始化**：
+   ```c
+   // main.c 核心初始化代码
+   int main(int argc, char* argv[]) {
+       // 1. 检查参数合法性
+       if (argc < 2) { fprintf(stderr, "Usage: %s <source_file.c>\n", argv[0]); return 1; }
+       // 2. 初始化符号表（语义校验的核心）
+       SymbolTable* sym_table = create_symbol_table();
+       // 3. 初始化AST根节点
+       ASTNode* ast_root = NULL;
+       // 4. 绑定词法分析器的输入文件（yyin是Flex内置输入句柄）
+       yyin = fopen(argv[1], "r");
+       if (yyin == NULL) { fprintf(stderr, "Error: Cannot open %s\n", argv[1]); return 1; }
+       // 5. 启动语法分析（触发后续所有流程）
+       yyparse(); 
+       // 后续步骤：AST→汇编生成（语义校验通过后执行）
+   }
+   ```
+3. **流程触发**：调用 `yyparse()`（Bison 内置函数），启动语法分析，间接触发词法分析（Flex/Bison 联动）。
+
+#### 步骤2：词法分析（lexer.l：字符流→Token流）
+**核心文件**：`src/lexer.l`（Flex 源文件，编译后生成 `lex.yy.c`）  
+**核心作用**：将C源文件的“原始字符流”转换为“结构化Token流”（最小语法单元），为语法分析提供输入。
+1. **字符扫描**：Flex 逐行读取 `test.c` 的字符（如 `int a = 10 + b;`），按预设规则匹配；
+2. **Token生成规则**（核心）：
+   | 原始字符       | 匹配规则          | 输出Token       | Token携带数据       |
+   |----------------|-------------------|-----------------|--------------------|
+   | `int`          | 关键字规则        | `INT`           | 无                 |
+   | `a`/`b`        | 标识符规则        | `IDENTIFIER`    | 字符串"a"/"b"       |
+   | `10`           | 整数常量规则      | `CONST_INT`     | 数值10             |
+   | `=`/`+`        | 运算符规则        | `ASSIGN`/`PLUS` | 无                 |
+   | `;`            | 分隔符规则        | `SEMI`          | 无                 |
+3. **辅助处理**：
+   - 跳过注释（`//` 单行注释、`/* */` 多行注释），不生成Token；
+   - 维护全局行号 `line_num`（每遇到 `\n` 自增），为后续错误提示提供位置；
+   - 非法字符处理（如 `#`/`@`）：直接输出 `Error at line X: Invalid character '#'`。
+4. **数据流转**：生成的Token流通过 Flex/Bison 联动机制，逐次传递给语法分析器（parser.y）。
+
+#### 步骤3：语法分析（parser.y：Token流→AST + 语义校验）
+**核心文件**：`src/parser.y`（Bison 源文件，编译后生成 `y.tab.c`）  
+**核心作用**：验证Token流的语法合法性，同时构建AST、嵌入语义校验（符号表），是编译器的核心环节。
+1. **语法规则匹配**：
+   Bison 按 `parser.y` 中定义的C语法规则（如 `program → func_def_list`、`stmt → type ID SEMI`、`expr → expr PLUS expr`）匹配Token流：
+   - 以 `int a = 10 + b;` 为例，Token流为 `INT → IDENTIFIER(a) → ASSIGN → CONST_INT(10) → PLUS → IDENTIFIER(b) → SEMI`；
+   - Bison 匹配到 `decl → type ID SEMI` + `stmt → ID ASSIGN expr SEMI` 规则，判定语法合法。
+2. **语义动作执行（核心）**：
+   语法规则匹配成功后，执行规则中的C代码（语义动作），完成两件关键事：
+   - **符号表操作**：
+     ```yacc
+     // parser.y 中变量声明规则的语义动作
+     decl: INT IDENTIFIER SEMI {
+         // 1. 插入变量到符号表（局部作用域，int类型）
+         add_symbol(sym_table, $2, SYMBOL_VAR, SCOPE_LOCAL, TYPE_INT, line_num);
+         // 2. 报错场景：若add_symbol返回1（重复定义），直接标记错误
+         if (add_symbol(...) != 0) { has_error = 1; }
+     };
+     // 赋值语句规则的语义动作
+     stmt: IDENTIFIER ASSIGN expr SEMI {
+         // 1. 查询变量是否已声明（未声明则报错）
+         Symbol* sym = find_symbol(sym_table, $1);
+         if (sym == NULL) { yyerror("Variable used before declaration"); has_error = 1; }
+     };
+     ```
+   - **AST构建**：
+     ```yacc
+     // 二元运算规则的语义动作（10 + b）
+     expr: expr PLUS expr {
+         // 创建加法运算AST节点，左子节点=10，右子节点=b
+         $$ = create_binop_node(OP_PLUS, $1, $3, line_num);
+     };
+     // 赋值语句规则的语义动作（a = 10 + b）
+     stmt: IDENTIFIER ASSIGN expr SEMI {
+         // 创建赋值AST节点，左子节点=a（变量），右子节点=加法表达式
+         $$ = create_assign_node(create_var_node($1, sym->data_type, line_num), $3, line_num);
+     };
+     ```
+3. **错误处理**：
+   - 语法错误（如缺少分号）：调用 `yyerror()` 输出 `Error at line X: syntax error, missing ';'`；
+   - 语义错误（如未声明变量、类型不匹配）：直接在语义动作中输出错误，标记 `has_error = 1`；
+   - 错误恢复：通过 `error` 规则跳过错误部分，继续解析后续代码（避免单个错误导致编译终止）。
+4. **数据流转**：若语法/语义无错误，生成完整的AST（根节点 `ast_root`），传递给汇编生成模块。
+
+#### 步骤4：语义分析（符号表核心校验）
+**核心文件**：`src/symbol_table.c/h`  
+**核心作用**：语法分析的“逻辑校验补充”，确保代码语义合法（语法合法≠语义合法）。
+1. **核心校验场景**：
+   - 重复定义：同作用域内多次声明 `int a; int a;` → 符号表 `add_symbol()` 检测并报错；
+   - 未声明使用：使用 `b` 但未声明 → `find_symbol()` 返回NULL，触发报错；
+   - 类型不匹配：`int a = 3.14;` → 语义动作中检查 `sym->data_type` 与常量类型，触发报错；
+   - 作用域非法：访问超出作用域的变量（如if块内的局部变量，块外使用）→ 符号表 `exit_scope()` 后查询不到，触发报错；
+2. **辅助处理**：为局部变量分配栈帧偏移（如 `a` 分配 `ebp-4`），记录到符号表 `symbol->offset`，为汇编生成提供内存地址。
+
+#### 步骤5：汇编代码生成（codegen.c：AST→汇编代码）
+**核心文件**：`src/codegen.c`  
+**核心作用**：遍历AST，将结构化的语法逻辑转换为可执行的x86汇编代码。
+1. **AST遍历**：调用 `traverse_ast(ast_root, gen_asm_callback)`，深度优先遍历AST的每个节点；
+2. **节点→汇编指令映射**：
+   - 变量声明节点 → 分配栈空间（`sub $16, %esp`）；
+   - 赋值节点 `a = 10 + b` → 生成：
+     ```asm
+     mov  -8(%ebp), %eax  # 将b的值（ebp-8）加载到eax
+     add  $10, %eax       # eax = eax + 10
+     mov  %eax, -4(%ebp)  # 将eax的值存入a的地址（ebp-4）
+     ```
+   - if/for节点 → 生成跳转指令（`cmp`/`je`/`jmp`）+ 标签（`label_0`）；
+3. **汇编代码拼接**：将所有指令拼接至 `asm_buffer` 缓冲区，生成完整的汇编文件（如 `output.s`），包含：
+   - 段定义（`.data` 数据段、`.text` 代码段）；
+   - main函数入口/出口（`push %ebp`/`mov %esp, %ebp`/`ret`）；
+   - 核心指令（对应AST的运算、赋值、分支逻辑）。
+
+#### 步骤6：汇编与链接（系统命令调用）
+**核心文件**：`src/main.c`  
+**核心作用**：调用系统工具（GCC/AS/LD）将汇编代码转换为可执行文件。
+1. **写入汇编文件**：将 `asm_buffer` 中的汇编代码写入 `output.s`；
+2. **调用系统命令**：
+   ```c
+   // main.c 中调用系统命令
+   system("gcc output.s -o output"); // GCC将汇编文件编译为可执行文件output
+   ```
+3. **结果输出**：若编译成功，生成可执行文件 `output`；若汇编/链接出错（如指令非法），输出系统错误信息。
+
+#### 步骤7：资源释放（可选）
+**核心文件**：`src/main.c`  
+**核心作用**：释放所有动态分配的内存，避免泄漏：
+```c
+// 释放AST内存
+free_ast(ast_root);
+// 释放符号表内存
+destroy_symbol_table(sym_table);
+// 关闭文件句柄
+fclose(yyin);
+```
+
+### 四、关键数据流转总结
+```
+C源文件（test.c）→ 字符流 → 词法分析 → Token流 → 语法分析 → AST + 语义校验 → 汇编生成 → 汇编代码（output.s）→ 汇编/链接 → 可执行文件（output）
+```
+
+### 五、总结
+MyCComplier 的整体运行逻辑可归纳为3个核心阶段：
+1. **前端（词法/语法/语义）**：将原始C代码转换为结构化AST，同时完成语法+语义合法性校验，核心依赖 Flex/Bison + 符号表；
+2. **中端（AST）**：作为“中间表示”，承接前端的语法结构，为后端汇编生成提供结构化数据，核心依赖 ast.c/h；
+3. **后端（汇编生成/链接）**：将AST转换为x86汇编代码，调用系统工具生成可执行文件，核心依赖 codegen.c + 符号表的栈偏移信息。
+
+整个流程的核心是“数据结构化”：从无结构的字符流，到结构化的Token流，再到树形的AST，最终转换为结构化的汇编指令，每一步都解决“编译器如何理解代码”的问题。

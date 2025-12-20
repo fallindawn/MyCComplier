@@ -215,11 +215,9 @@ Num   Op              Arg1                 Arg2                 Result
 ====================================================
 
 Generating assembly code...
+Optimizing assembly code...
 
 ========== Assembly Code ==========
-;;; =======================================
-;;; Generated Assembly Code
-;;; =======================================
 
 .386
 .model flat, stdcall
@@ -242,19 +240,6 @@ Generating assembly code...
 .code
 
 main:
-    ;;; DECL a
-    ;;; DECL b
-    ;;; DECL c
-    ;;; DECL d
-    ;;; DECL x
-    ;;; DECL y
-    ;;; DECL ch
-    ;;; DECL u_a
-    ;;; DECL u_ch
-    ;;; DECL u_b
-    ;;; DECL u_c
-    ;;; DECL flag
-    ;;; DECL func
     mov eax, [100]
     mov [t0], eax
     mov eax, t0
@@ -297,7 +282,6 @@ main:
     ret
     ret
 
-    ;;; 程序结束
     mov eax, 0
     ret
 

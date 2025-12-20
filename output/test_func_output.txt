@@ -259,11 +259,9 @@ Num   Op              Arg1                 Arg2                 Result
 ====================================================
 
 Generating assembly code...
+Optimizing assembly code...
 
 ========== Assembly Code ==========
-;;; =======================================
-;;; Generated Assembly Code
-;;; =======================================
 
 .386
 .model flat, stdcall
@@ -282,9 +280,6 @@ Generating assembly code...
 .code
 
 add:
-    ;;; DECL p
-    ;;; DECL q
-    ;;; DECL res
     mov eax, p
     mov [t1], eax
     mov eax, q
@@ -301,8 +296,6 @@ add:
     ret
     ret
 subtract:
-    ;;; DECL u
-    ;;; DECL v
     mov eax, u
     mov [t5], eax
     mov eax, v
@@ -315,10 +308,6 @@ subtract:
     ret
     ret
 main:
-    ;;; DECL a
-    ;;; DECL b
-    ;;; DECL sum
-    ;;; DECL diff
     mov eax, [100]
     mov [t7], eax
     mov eax, t7
@@ -331,12 +320,10 @@ main:
     mov [t10], eax
     mov eax, [t10]
     push eax
-    ;;; Push parameter: t10
     mov eax, b
     mov [t11], eax
     mov eax, [t11]
     push eax
-    ;;; Push parameter: t11
     call add
     mov [t9], eax
     mov eax, t9
@@ -345,33 +332,26 @@ main:
     mov [t13], eax
     mov eax, [t13]
     push eax
-    ;;; Push parameter: t13
     mov eax, b
     mov [t14], eax
     mov eax, [t14]
     push eax
-    ;;; Push parameter: t14
     call subtract
     mov [t12], eax
     mov eax, t12
     mov [diff], eax
     mov eax, sum
     mov [t15], eax
-    ;;; WRITE [t15]
     mov eax, [t15]
-    ;;; 需要调用输出函数（如 printf）
     mov eax, diff
     mov [t16], eax
-    ;;; WRITE [t16]
     mov eax, [t16]
-    ;;; 需要调用输出函数（如 printf）
     mov eax, 0
     mov [t17], eax
     mov eax, [t17]
     ret
     ret
 
-    ;;; 程序结束
     mov eax, 0
     ret
 
