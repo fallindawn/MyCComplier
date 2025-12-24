@@ -7,8 +7,12 @@ int add(int a, int b) {
 }
 
 int main() {
-    int x, y, z, sum;
-
+    int x;
+    int y;
+    int z;
+    int sum;
+    int temp;
+    
     x = 10;
     y = 5;
     z = 0;
@@ -21,7 +25,7 @@ int main() {
     z = z * 1;      /* 应该简化为 z = z */
 
     /* 死代码消除测试 */
-    int temp = x + y;  /* 这个temp如果不使用，应该被消除 */
+    temp = x + y;  /* 这个temp如果不使用，应该被消除 */
 
     return z;
 }

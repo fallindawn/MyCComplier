@@ -6,4 +6,361 @@ Input File: .\test\test_optimize.c
 
 Starting lexical and syntax analysis...
 
-Compilation failed!
+Syntax analysis completed successfully!
+
+========== Lexical Analysis Results ==========
+No.   Token Type           Lexeme               Line      
+----------------------------------------------
+1     KEYWORD_INT          int                  3         
+2     IDENTIFIER           add                  3         
+3     LPAREN               (                    3         
+4     KEYWORD_INT          int                  3         
+5     IDENTIFIER           a                    3         
+6     COMMA                ,                    3         
+7     KEYWORD_INT          int                  3         
+8     IDENTIFIER           b                    3         
+9     RPAREN               )                    3         
+10    LBRACE               {                    3         
+11    KEYWORD_INT          int                  4         
+12    IDENTIFIER           result               4         
+13    SEMI                 ;                    4         
+14    IDENTIFIER           result               5         
+15    OP_ASSIGN            =                    5         
+16    IDENTIFIER           a                    5         
+17    OP_PLUS              +                    5         
+18    IDENTIFIER           b                    5         
+19    SEMI                 ;                    5         
+20    KEYWORD_RETURN       return               6         
+21    IDENTIFIER           result               6         
+22    SEMI                 ;                    6         
+23    RBRACE               }                    7         
+24    KEYWORD_INT          int                  9         
+25    IDENTIFIER           main                 9         
+26    LPAREN               (                    9         
+27    RPAREN               )                    9         
+28    LBRACE               {                    9         
+29    KEYWORD_INT          int                  10        
+30    IDENTIFIER           x                    10        
+31    SEMI                 ;                    10        
+32    KEYWORD_INT          int                  11        
+33    IDENTIFIER           y                    11        
+34    SEMI                 ;                    11        
+35    KEYWORD_INT          int                  12        
+36    IDENTIFIER           z                    12        
+37    SEMI                 ;                    12        
+38    KEYWORD_INT          int                  13        
+39    IDENTIFIER           sum                  13        
+40    SEMI                 ;                    13        
+41    KEYWORD_INT          int                  14        
+42    IDENTIFIER           temp                 14        
+43    SEMI                 ;                    14        
+44    IDENTIFIER           x                    16        
+45    OP_ASSIGN            =                    16        
+46    NUMBER               10                   16        
+47    SEMI                 ;                    16        
+48    IDENTIFIER           y                    17        
+49    OP_ASSIGN            =                    17        
+50    NUMBER               5                    17        
+51    SEMI                 ;                    17        
+52    IDENTIFIER           z                    18        
+53    OP_ASSIGN            =                    18        
+54    NUMBER               0                    18        
+55    SEMI                 ;                    18        
+56    IDENTIFIER           sum                  21        
+57    OP_ASSIGN            =                    21        
+58    IDENTIFIER           add                  21        
+59    LPAREN               (                    21        
+60    IDENTIFIER           x                    21        
+61    OP_PLUS              +                    21        
+62    NUMBER               5                    21        
+63    COMMA                ,                    21        
+64    IDENTIFIER           y                    21        
+65    OP_MULT              *                    21        
+66    NUMBER               2                    21        
+67    RPAREN               )                    21        
+68    SEMI                 ;                    21        
+69    IDENTIFIER           z                    24        
+70    OP_ASSIGN            =                    24        
+71    IDENTIFIER           sum                  24        
+72    OP_PLUS              +                    24        
+73    NUMBER               0                    24        
+74    SEMI                 ;                    24        
+75    IDENTIFIER           z                    25        
+76    OP_ASSIGN            =                    25        
+77    IDENTIFIER           z                    25        
+78    OP_MULT              *                    25        
+79    NUMBER               1                    25        
+80    SEMI                 ;                    25        
+81    IDENTIFIER           temp                 28        
+82    OP_ASSIGN            =                    28        
+83    IDENTIFIER           x                    28        
+84    OP_PLUS              +                    28        
+85    IDENTIFIER           y                    28        
+86    SEMI                 ;                    28        
+87    KEYWORD_RETURN       return               30        
+88    IDENTIFIER           z                    30        
+89    SEMI                 ;                    30        
+90    RBRACE               }                    31        
+==============================================
+
+
+========== Abstract Syntax Tree (AST) ==========
+PROGRAM
+PROGRAM
+  DECL_LIST
+    FUNC_DEF [function]
+      ID(add)
+      PARAM_LIST
+        DECL
+          ID(a)
+        DECL
+          ID(b)
+      STMT_LIST
+        DECL
+          ID(result)
+        ASSIGN
+          ID(result)
+          BINOP(+)
+            ID(a)
+            ID(b)
+        RETURN
+          ID(result)
+    FUNC_DEF [function]
+      ID(main)
+      STMT_LIST
+        DECL
+          ID(x)
+        DECL
+          ID(y)
+        DECL
+          ID(z)
+        DECL
+          ID(sum)
+        DECL
+          ID(temp)
+        ASSIGN
+          ID(x)
+          NUM(10)
+        ASSIGN
+          ID(y)
+          NUM(5)
+        ASSIGN
+          ID(z)
+          NUM(0)
+        ASSIGN
+          ID(sum)
+          CALL [call]
+            ID(add)
+            ARG_LIST
+              BINOP(+)
+                ID(x)
+                NUM(5)
+              BINOP(*)
+                ID(y)
+                NUM(2)
+        ASSIGN
+          ID(z)
+          BINOP(+)
+            ID(sum)
+            NUM(0)
+        ASSIGN
+          ID(z)
+          BINOP(*)
+            ID(z)
+            NUM(1)
+        ASSIGN
+          ID(temp)
+          BINOP(+)
+            ID(x)
+            ID(y)
+        RETURN
+          ID(z)
+================================================
+
+
+========== Symbol Table ==========
+Name                           Kind                 Type                 Line      
+-----------------------------------------------------------
+a                              variable             int                  3         
+b                              variable             int                  3         
+result                         variable             int                  4         
+add                            function             int                  7         
+x                              variable             int                  10        
+y                              variable             int                  11        
+z                              variable             int                  12        
+sum                            variable             int                  13        
+temp                           variable             int                  14        
+main                           function             int                  31        
+===================================
+
+Generating intermediate code...
+
+========== Intermediate Code (Quadruples) ==========
+Num   Op              Arg1                 Arg2                 Result              
+-----------------------------------------------------
+0     LABEL add                                                                     
+1     DECL            a                                                             
+2     DECL            b                                                             
+3     DECL            result                                                        
+4     =               a                                         t1                  
+5     =               b                                         t2                  
+6     +               t1                   t2                   t0                  
+7     =               t0                                        result              
+8     =               result                                    t3                  
+9     RET             t3                                                            
+10    RET                                                                           
+11    LABEL main                                                                    
+12    DECL            x                                                             
+13    DECL            y                                                             
+14    DECL            z                                                             
+15    DECL            sum                                                           
+16    DECL            temp                                                          
+17    =               10                                        t4                  
+18    =               t4                                        x                   
+19    =               5                                         t5                  
+20    =               t5                                        y                   
+21    =               0                                         t6                  
+22    =               t6                                        z                   
+23    =               x                                         t9                  
+24    =               5                                         t10                 
+25    +               t9                   t10                  t8                  
+26    PARAM           t8                                                            
+27    =               y                                         t12                 
+28    =               2                                         t13                 
+29    *               t12                  t13                  t11                 
+30    PARAM           t11                                                           
+31    CALL add                                                  t7                  
+32    =               t7                                        sum                 
+33    =               sum                                       t15                 
+34    =               0                                         t16                 
+35    +               t15                  t16                  t14                 
+36    =               t14                                       z                   
+37    =               z                                         t18                 
+38    =               1                                         t19                 
+39    *               t18                  t19                  t17                 
+40    =               t17                                       z                   
+41    =               x                                         t21                 
+42    =               y                                         t22                 
+43    +               t21                  t22                  t20                 
+44    =               t20                                       temp                
+45    =               z                                         t23                 
+46    RET             t23                                                           
+47    RET                                                                           
+====================================================
+
+Generating assembly code...
+Optimizing assembly code...
+
+========== Assembly Code ==========
+
+.386
+.model flat, stdcall
+
+.data
+    a dd 0
+    b dd 0
+    result dd 0
+    x dd 0
+    y dd 0
+    z dd 0
+    sum dd 0
+    temp dd 0
+
+.code
+
+add:
+    mov eax, a
+    mov [t1], eax
+    mov eax, b
+    mov [t2], eax
+    mov eax, [t1]
+    mov ebx, [t2]
+    add eax, ebx
+    mov [t0], eax
+    mov eax, t0
+    mov [result], eax
+    mov eax, result
+    mov [t3], eax
+    mov eax, [t3]
+    ret
+    ret
+main:
+    mov eax, 10
+    mov [t4], eax
+    mov eax, t4
+    mov [x], eax
+    mov eax, 5
+    mov [t5], eax
+    mov eax, t5
+    mov [y], eax
+    mov eax, 0
+    mov [t6], eax
+    mov eax, t6
+    mov [z], eax
+    mov eax, x
+    mov [t9], eax
+    mov eax, 5
+    mov [t10], eax
+    mov eax, [t9]
+    mov ebx, [t10]
+    add eax, ebx
+    mov [t8], eax
+    mov eax, [t8]
+    push eax
+    mov eax, y
+    mov [t12], eax
+    mov eax, 2
+    mov [t13], eax
+    mov eax, [t12]
+    mov ebx, [t13]
+    imul eax, ebx
+    mov [t11], eax
+    mov eax, [t11]
+    push eax
+    call add
+    mov [t7], eax
+    mov eax, t7
+    mov [sum], eax
+    mov eax, sum
+    mov [t15], eax
+    mov eax, 0
+    mov [t16], eax
+    mov eax, [t15]
+    mov ebx, [t16]
+    add eax, ebx
+    mov [t14], eax
+    mov eax, t14
+    mov [z], eax
+    mov eax, z
+    mov [t18], eax
+    mov eax, 1
+    mov [t19], eax
+    mov eax, [t18]
+    mov ebx, [t19]
+    imul eax, ebx
+    mov [t17], eax
+    mov eax, t17
+    mov [z], eax
+    mov eax, x
+    mov [t21], eax
+    mov eax, y
+    mov [t22], eax
+    mov eax, [t21]
+    mov ebx, [t22]
+    add eax, ebx
+    mov [t20], eax
+    mov eax, t20
+    mov [temp], eax
+    mov eax, z
+    mov [t23], eax
+    mov eax, [t23]
+    ret
+    ret
+
+    mov eax, 0
+    ret
+
+end
+===================================
+
+Compilation completed successfully!

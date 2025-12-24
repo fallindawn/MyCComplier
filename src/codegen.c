@@ -464,7 +464,7 @@ void optimizeIntermediateCode(CodeGenerator *gen) {
 
 /* ==================== 汇编代码优化函数 ==================== */
 
-/* 提取汇编指令中的操作数（简化版） */
+/* 提取汇编指令中的操作数 */
 int extractAsmOperands(const char *code, char *op, char *reg1, char *reg2) {
     if (code == NULL || strlen(code) < 4) return 0;
     
